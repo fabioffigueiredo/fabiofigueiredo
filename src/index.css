@@ -55,6 +55,8 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
     /* VS Code Syntax Highlighting Colors */
     --vs-blue: 207 100% 68%;
     --vs-green: 89 62% 52%;
