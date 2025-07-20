@@ -2,39 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* VS Code themed design system for portfolio
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* VS Code Dark Theme Colors */
+    --background: 220 13% 18%;
+    --foreground: 220 14% 71%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 220 13% 16%;
+    --card-foreground: 220 14% 71%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 220 13% 16%;
+    --popover-foreground: 220 14% 71%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* VS Code Accent Colors */
+    --primary: 207 100% 68%;
+    --primary-foreground: 220 13% 18%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 13% 20%;
+    --secondary-foreground: 220 14% 71%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 13% 14%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 220 13% 20%;
+    --accent-foreground: 220 14% 71%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 220 14% 71%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+    --ring: 207 100% 68%;
 
     --radius: 0.5rem;
 
@@ -55,34 +57,33 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* VS Code Syntax Highlighting Colors */
+    --vs-blue: 207 100% 68%;
+    --vs-green: 89 62% 52%;
+    --vs-yellow: 54 100% 68%;
+    --vs-orange: 32 100% 68%;
+    --vs-red: 0 81% 72%;
+    --vs-purple: 267 57% 78%;
+    --vs-cyan: 187 47% 55%;
+    --vs-gray: 220 9% 46%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--vs-blue)), hsl(var(--vs-purple)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--vs-green)), hsl(var(--vs-cyan)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--vs-orange)), hsl(var(--vs-yellow)));
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    /* Shadows */
+    --shadow-glow: 0 0 20px hsl(var(--vs-blue) / 0.3);
+    --shadow-card: 0 4px 6px -1px hsl(220 13% 8% / 0.1), 0 2px 4px -1px hsl(220 13% 8% / 0.06);
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+  .light {
+    /* Light mode would go here if needed */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -100,6 +101,78 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-mono;
+  }
+
+  /* VS Code inspired scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--foreground));
+  }
+}
+
+@layer components {
+  .syntax-highlight {
+    @apply font-mono;
+  }
+
+  .syntax-blue {
+    color: hsl(var(--vs-blue));
+  }
+
+  .syntax-green {
+    color: hsl(var(--vs-green));
+  }
+
+  .syntax-yellow {
+    color: hsl(var(--vs-yellow));
+  }
+
+  .syntax-orange {
+    color: hsl(var(--vs-orange));
+  }
+
+  .syntax-red {
+    color: hsl(var(--vs-red));
+  }
+
+  .syntax-purple {
+    color: hsl(var(--vs-purple));
+  }
+
+  .syntax-cyan {
+    color: hsl(var(--vs-cyan));
+  }
+
+  .glow-effect {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .card-shadow {
+    box-shadow: var(--shadow-card);
+  }
+
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+
+  .gradient-accent {
+    background: var(--gradient-accent);
   }
 }
