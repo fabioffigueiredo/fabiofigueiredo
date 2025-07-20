@@ -1,434 +1,730 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Card } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { X, Plus, Trash2, BookOpen, Briefcase, Award, FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
-import { 
-  Plus, 
-  Save, 
-  Trash2, 
-  Edit, 
-  X,
-  Code,
-  GraduationCap,
-  Briefcase,
-  Settings,
-  Database,
-  Image as ImageIcon
-} from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { toast } from "@/components/ui/use-toast"
 
 interface AdminPanelProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+interface Skill {
+  id: string;
+  name: string;
+  percentage: number;
+}
+
+interface Experience {
+  id: string;
+  title: string;
+  company: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+}
+
+interface Education {
+  id: string;
+  institution: string;
+  degree: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+}
+
 const AdminPanel = ({ isOpen, onClose }: AdminPanelProps) => {
-  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('skills');
-  const [newSkill, setNewSkill] = useState({ name: '', level: 0, category: 'backend' });
-  const [newEducation, setNewEducation] = useState({
-    degree: '',
-    institution: '',
-    period: '',
-    description: '',
-    highlights: ''
-  });
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [newSkill, setNewSkill] = useState({ name: '', percentage: 0 });
+  const [experiences, setExperiences] = useState<Experience[]>([]);
   const [newExperience, setNewExperience] = useState({
     title: '',
     company: '',
-    location: '',
-    period: '',
+    startDate: '',
+    endDate: '',
     description: '',
-    achievements: '',
-    technologies: ''
+  });
+  const [education, setEducation] = useState<Education[]>([]);
+  const [newEducation, setNewEducation] = useState({
+    institution: '',
+    degree: '',
+    startDate: '',
+    endDate: '',
+    description: '',
+  });
+  
+  // Projects state
+  const [projects, setProjects] = useState<any[]>([]);
+  const [newProject, setNewProject] = useState({
+    name: '',
+    description: '',
+    githubUrl: '',
+    liveUrl: '',
+    technologies: [] as string[],
+    stars: 0,
+    forks: 0
   });
 
-  const adminSections = [
-    { id: 'skills', label: 'Skills', icon: Code },
-    { id: 'education', label: 'Educação', icon: GraduationCap },
-    { id: 'experience', label: 'Experiência', icon: Briefcase },
-    { id: 'content', label: 'Conteúdo', icon: Database },
-    { id: 'media', label: 'Mídia', icon: ImageIcon },
-    { id: 'settings', label: 'Configurações', icon: Settings }
-  ];
-
-  const handleAddSkill = () => {
-    if (!newSkill.name || newSkill.level <= 0) {
-      toast({
-        title: "Erro",
-        description: "Preencha todos os campos corretamente",
-        variant: "destructive"
-      });
-      return;
+  useEffect(() => {
+    // Load skills
+    const savedSkills = localStorage.getItem('portfolioSkills');
+    if (savedSkills) {
+      setSkills(JSON.parse(savedSkills));
     }
 
-    // Simulated save
-    toast({
-      title: "Sucesso!",
-      description: `Habilidade "${newSkill.name}" adicionada com ${newSkill.level}%`,
-    });
-    
-    setNewSkill({ name: '', level: 0, category: 'backend' });
-  };
-
-  const handleAddEducation = () => {
-    if (!newEducation.degree || !newEducation.institution) {
-      toast({
-        title: "Erro",
-        description: "Preencha pelo menos o curso e a instituição",
-        variant: "destructive"
-      });
-      return;
+    // Load experiences
+    const savedExperiences = localStorage.getItem('portfolioExperiences');
+    if (savedExperiences) {
+      setExperiences(JSON.parse(savedExperiences));
     }
 
-    toast({
-      title: "Sucesso!",
-      description: `Formação "${newEducation.degree}" adicionada`,
-    });
-    
-    setNewEducation({
-      degree: '',
-      institution: '',
-      period: '',
-      description: '',
-      highlights: ''
-    });
-  };
-
-  const handleAddExperience = () => {
-    if (!newExperience.title || !newExperience.company) {
-      toast({
-        title: "Erro",
-        description: "Preencha pelo menos o cargo e a empresa",
-        variant: "destructive"
-      });
-      return;
+    // Load education
+    const savedEducation = localStorage.getItem('portfolioEducation');
+    if (savedEducation) {
+      setEducation(JSON.parse(savedEducation));
     }
+  }, []);
 
+  // Load projects
+  useEffect(() => {
+    const savedProjects = localStorage.getItem('portfolioProjects');
+    if (savedProjects) {
+      setProjects(JSON.parse(savedProjects));
+    }
+  }, []);
+
+  const addSkill = () => {
+    if (newSkill.name && newSkill.percentage >= 0 && newSkill.percentage <= 100) {
+      const skill = { ...newSkill, id: Date.now().toString() };
+      const updatedSkills = [...skills, skill];
+      setSkills(updatedSkills);
+      localStorage.setItem('portfolioSkills', JSON.stringify(updatedSkills));
+      setNewSkill({ name: '', percentage: 0 });
+       toast({
+        title: "Skill adicionada!",
+        description: "A skill foi adicionada com sucesso.",
+      });
+    }
+  };
+
+  const deleteSkill = (id: string) => {
+    const updatedSkills = skills.filter(skill => skill.id !== id);
+    setSkills(updatedSkills);
+    localStorage.setItem('portfolioSkills', JSON.stringify(updatedSkills));
+     toast({
+        title: "Skill removida!",
+        description: "A skill foi removida com sucesso.",
+      });
+  };
+
+  const addExperience = () => {
+    if (newExperience.title && newExperience.company && newExperience.startDate && newExperience.endDate && newExperience.description) {
+      const experience = { ...newExperience, id: Date.now().toString() };
+      const updatedExperiences = [...experiences, experience];
+      setExperiences(updatedExperiences);
+      localStorage.setItem('portfolioExperiences', JSON.stringify(updatedExperiences));
+      setNewExperience({ title: '', company: '', startDate: '', endDate: '', description: '' });
+       toast({
+        title: "Experiência adicionada!",
+        description: "A experiência foi adicionada com sucesso.",
+      });
+    }
+  };
+
+  const deleteExperience = (id: string) => {
+    const updatedExperiences = experiences.filter(experience => experience.id !== id);
+    setExperiences(updatedExperiences);
+    localStorage.setItem('portfolioExperiences', JSON.stringify(updatedExperiences));
+     toast({
+        title: "Experiência removida!",
+        description: "A experiência foi removida com sucesso.",
+      });
+  };
+
+  const addEducation = () => {
+    if (newEducation.institution && newEducation.degree && newEducation.startDate && newEducation.endDate && newEducation.description) {
+      const educationItem = { ...newEducation, id: Date.now().toString() };
+      const updatedEducation = [...education, educationItem];
+      setEducation(updatedEducation);
+      localStorage.setItem('portfolioEducation', JSON.stringify(updatedEducation));
+      setNewEducation({ institution: '', degree: '', startDate: '', endDate: '', description: '' });
+       toast({
+        title: "Educação adicionada!",
+        description: "A educação foi adicionada com sucesso.",
+      });
+    }
+  };
+
+  const deleteEducation = (id: string) => {
+    const updatedEducation = education.filter(educationItem => educationItem.id !== id);
+    setEducation(updatedEducation);
+    localStorage.setItem('portfolioEducation', JSON.stringify(updatedEducation));
+     toast({
+        title: "Educação removida!",
+        description: "A educação foi removida com sucesso.",
+      });
+  };
+
+  // Project functions
+  const addProject = () => {
+    if (newProject.name && newProject.description && newProject.githubUrl) {
+      const project = {
+        ...newProject,
+        id: Date.now().toString(),
+        technologies: newProject.technologies.filter(tech => tech.trim() !== '')
+      };
+      const updatedProjects = [...projects, project];
+      setProjects(updatedProjects);
+      localStorage.setItem('portfolioProjects', JSON.stringify(updatedProjects));
+      setNewProject({
+        name: '',
+        description: '',
+        githubUrl: '',
+        liveUrl: '',
+        technologies: [],
+        stars: 0,
+        forks: 0
+      });
+      toast({
+        title: "Projeto adicionado!",
+        description: "O projeto foi adicionado com sucesso.",
+      });
+    }
+  };
+
+  const deleteProject = (id: string) => {
+    const updatedProjects = projects.filter(project => project.id !== id);
+    setProjects(updatedProjects);
+    localStorage.setItem('portfolioProjects', JSON.stringify(updatedProjects));
     toast({
-      title: "Sucesso!",
-      description: `Experiência "${newExperience.title}" adicionada`,
-    });
-    
-    setNewExperience({
-      title: '',
-      company: '',
-      location: '',
-      period: '',
-      description: '',
-      achievements: '',
-      technologies: ''
+      title: "Projeto removido!",
+      description: "O projeto foi removido com sucesso.",
     });
   };
+
+  const addTechnologyToProject = () => {
+    setNewProject({
+      ...newProject,
+      technologies: [...newProject.technologies, '']
+    });
+  };
+
+  const updateProjectTechnology = (index: number, value: string) => {
+    const updatedTechnologies = [...newProject.technologies];
+    updatedTechnologies[index] = value;
+    setNewProject({
+      ...newProject,
+      technologies: updatedTechnologies
+    });
+  };
+
+  if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="w-full max-w-4xl max-h-[90vh] overflow-hidden"
-          >
-            <Card className="card-shadow">
-              
-              {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-border">
-                <div className="flex items-center space-x-2">
-                  <Settings className="h-6 w-6 text-vs-orange" />
-                  <h2 className="text-2xl font-bold syntax-highlight">
-                    <span className="syntax-blue">class</span>{' '}
-                    <span className="syntax-yellow">AdminPanel</span>{' '}
-                    <span className="syntax-purple">{'{'}</span>
-                  </h2>
-                </div>
-                <Button variant="ghost" size="sm" onClick={onClose}>
-                  <X className="h-4 w-4" />
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-card rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        {/* Header */}
+        <div className="p-6 border-b border-border bg-card/50">
+          <div className="flex items-center justify-between">
+            <div className="syntax-highlight">
+              <h2 className="text-2xl font-bold">
+                <span className="syntax-blue">class</span>{' '}
+                <span className="syntax-yellow">AdminPanel</span>{' '}
+                <span className="syntax-purple">{'{'}</span>
+              </h2>
+            </div>
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="border-b border-border bg-card/30">
+          <div className="flex space-x-1 p-2">
+            {[
+              { id: 'skills', label: 'Skills', icon: BookOpen },
+              { id: 'projects', label: 'Projetos', icon: FolderOpen },
+              { id: 'experience', label: 'Experiência', icon: Briefcase },
+              { id: 'education', label: 'Educação', icon: Award }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <Button
+                  key={tab.id}
+                  variant={activeTab === tab.id ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`syntax-highlight ${
+                    activeTab === tab.id 
+                      ? 'bg-vs-blue/20 text-vs-blue border border-vs-blue/30' 
+                      : 'hover:bg-secondary/80'
+                  }`}
+                >
+                  <Icon className="h-4 w-4 mr-2" />
+                  <span className="syntax-purple">{tab.label}</span>
                 </Button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 overflow-y-auto max-h-[60vh]">
+          {/* Projects Tab */}
+          {activeTab === 'projects' && (
+            <div className="space-y-6">
+              <div className="syntax-highlight">
+                <h3 className="text-lg font-semibold mb-4">
+                  <span className="syntax-green">// Gerenciar Projetos</span>
+                </h3>
               </div>
 
-              <div className="flex h-[600px]">
-                
-                {/* Sidebar */}
-                <div className="w-64 border-r border-border bg-muted/20">
-                  <nav className="p-4 space-y-2">
-                    {adminSections.map((section) => {
-                      const Icon = section.icon;
-                      return (
-                        <Button
-                          key={section.id}
-                          variant={activeTab === section.id ? "default" : "ghost"}
-                          className={`w-full justify-start syntax-highlight ${
-                            activeTab === section.id 
-                              ? 'bg-vs-blue/20 text-vs-blue border border-vs-blue/30' 
-                              : 'hover:bg-secondary/80'
-                          }`}
-                          onClick={() => setActiveTab(section.id)}
-                        >
-                          <Icon className="h-4 w-4 mr-2" />
-                          <span className="syntax-purple">{section.label}</span>
-                        </Button>
-                      );
-                    })}
-                  </nav>
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 p-6 overflow-y-auto">
+              {/* Add New Project */}
+              <Card className="p-4 border-vs-blue/30">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="project-name">Nome do Projeto</Label>
+                    <Input
+                      id="project-name"
+                      value={newProject.name}
+                      onChange={(e) => setNewProject({...newProject, name: e.target.value})}
+                      placeholder="Nome do projeto"
+                    />
+                  </div>
                   
-                  {/* Skills Tab */}
-                  {activeTab === 'skills' && (
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-bold text-vs-blue">Gerenciar Habilidades</h3>
-                      
-                      <Card className="p-4">
-                        <h4 className="font-semibold mb-4 text-vs-green">Adicionar Nova Habilidade</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="project-github">URL do GitHub</Label>
+                    <Input
+                      id="project-github"
+                      value={newProject.githubUrl}
+                      onChange={(e) => setNewProject({...newProject, githubUrl: e.target.value})}
+                      placeholder="https://github.com/usuario/projeto"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <Label htmlFor="project-description">Descrição</Label>
+                    <Textarea
+                      id="project-description"
+                      value={newProject.description}
+                      onChange={(e) => setNewProject({...newProject, description: e.target.value})}
+                      placeholder="Descrição do projeto"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="project-live">URL Demo (opcional)</Label>
+                    <Input
+                      id="project-live"
+                      value={newProject.liveUrl}
+                      onChange={(e) => setNewProject({...newProject, liveUrl: e.target.value})}
+                      placeholder="https://projeto-demo.com"
+                    />
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <div className="flex-1">
+                      <Label htmlFor="project-stars">Stars</Label>
+                      <Input
+                        id="project-stars"
+                        type="number"
+                        value={newProject.stars}
+                        onChange={(e) => setNewProject({...newProject, stars: Number(e.target.value)})}
+                        placeholder="0"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <Label htmlFor="project-forks">Forks</Label>
+                      <Input
+                        id="project-forks"
+                        type="number"
+                        value={newProject.forks}
+                        onChange={(e) => setNewProject({...newProject, forks: Number(e.target.value)})}
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <Label>Tecnologias</Label>
+                    <div className="space-y-2">
+                      {newProject.technologies.map((tech, index) => (
+                        <div key={index} className="flex space-x-2">
                           <Input
-                            placeholder="Nome da habilidade"
-                            value={newSkill.name}
-                            onChange={(e) => setNewSkill({...newSkill, name: e.target.value})}
+                            value={tech}
+                            onChange={(e) => updateProjectTechnology(index, e.target.value)}
+                            placeholder="Nome da tecnologia"
+                            className="flex-1"
                           />
-                          <Input
-                            type="number"
-                            min="0"
-                            max="100"
-                            placeholder="Nível (%)"
-                            value={newSkill.level || ''}
-                            onChange={(e) => setNewSkill({...newSkill, level: parseInt(e.target.value) || 0})}
-                          />
-                          <select
-                            className="px-3 py-2 border border-input rounded-md bg-background"
-                            value={newSkill.category}
-                            onChange={(e) => setNewSkill({...newSkill, category: e.target.value})}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              const updatedTechnologies = newProject.technologies.filter((_, i) => i !== index);
+                              setNewProject({...newProject, technologies: updatedTechnologies});
+                            }}
                           >
-                            <option value="backend">Backend</option>
-                            <option value="database">Database</option>
-                            <option value="tools">Tools</option>
-                            <option value="ai">AI/ML</option>
-                          </select>
-                        </div>
-                        <Button className="mt-4" onClick={handleAddSkill}>
-                          <Plus className="h-4 w-4 mr-2" />
-                          Adicionar Habilidade
-                        </Button>
-                      </Card>
-
-                      <Card className="p-4">
-                        <h4 className="font-semibold mb-4 text-vs-purple">Habilidades Atuais</h4>
-                        <div className="space-y-2">
-                          {['Python (98%)', 'SQL Server (75%)', 'Docker (70%)', 'Django (70%)', 'FastAPI (60%)', 'Power BI (55%)'].map((skill, index) => (
-                            <div key={index} className="flex items-center justify-between p-2 bg-secondary/30 rounded">
-                              <span>{skill}</span>
-                              <div className="space-x-2">
-                                <Button variant="ghost" size="sm">
-                                  <Edit className="h-3 w-3" />
-                                </Button>
-                                <Button variant="ghost" size="sm">
-                                  <Trash2 className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </Card>
-                    </div>
-                  )}
-
-                  {/* Education Tab */}
-                  {activeTab === 'education' && (
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-bold text-vs-blue">Gerenciar Educação</h3>
-                      
-                      <Card className="p-4">
-                        <h4 className="font-semibold mb-4 text-vs-green">Adicionar Formação</h4>
-                        <div className="space-y-4">
-                          <Input
-                            placeholder="Curso/Grau"
-                            value={newEducation.degree}
-                            onChange={(e) => setNewEducation({...newEducation, degree: e.target.value})}
-                          />
-                          <Input
-                            placeholder="Instituição"
-                            value={newEducation.institution}
-                            onChange={(e) => setNewEducation({...newEducation, institution: e.target.value})}
-                          />
-                          <Input
-                            placeholder="Período (ex: 2020 - 2024)"
-                            value={newEducation.period}
-                            onChange={(e) => setNewEducation({...newEducation, period: e.target.value})}
-                          />
-                          <Textarea
-                            placeholder="Descrição"
-                            value={newEducation.description}
-                            onChange={(e) => setNewEducation({...newEducation, description: e.target.value})}
-                          />
-                          <Textarea
-                            placeholder="Principais tópicos (um por linha)"
-                            value={newEducation.highlights}
-                            onChange={(e) => setNewEducation({...newEducation, highlights: e.target.value})}
-                          />
-                        </div>
-                        <Button className="mt-4" onClick={handleAddEducation}>
-                          <Plus className="h-4 w-4 mr-2" />
-                          Adicionar Formação
-                        </Button>
-                      </Card>
-                    </div>
-                  )}
-
-                  {/* Experience Tab */}
-                  {activeTab === 'experience' && (
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-bold text-vs-blue">Gerenciar Experiência</h3>
-                      
-                      <Card className="p-4">
-                        <h4 className="font-semibold mb-4 text-vs-green">Adicionar Experiência</h4>
-                        <div className="space-y-4">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <Input
-                              placeholder="Cargo"
-                              value={newExperience.title}
-                              onChange={(e) => setNewExperience({...newExperience, title: e.target.value})}
-                            />
-                            <Input
-                              placeholder="Empresa"
-                              value={newExperience.company}
-                              onChange={(e) => setNewExperience({...newExperience, company: e.target.value})}
-                            />
-                            <Input
-                              placeholder="Localização"
-                              value={newExperience.location}
-                              onChange={(e) => setNewExperience({...newExperience, location: e.target.value})}
-                            />
-                            <Input
-                              placeholder="Período"
-                              value={newExperience.period}
-                              onChange={(e) => setNewExperience({...newExperience, period: e.target.value})}
-                            />
-                          </div>
-                          <Textarea
-                            placeholder="Descrição do cargo"
-                            value={newExperience.description}
-                            onChange={(e) => setNewExperience({...newExperience, description: e.target.value})}
-                          />
-                          <Textarea
-                            placeholder="Principais realizações (uma por linha)"
-                            value={newExperience.achievements}
-                            onChange={(e) => setNewExperience({...newExperience, achievements: e.target.value})}
-                          />
-                          <Textarea
-                            placeholder="Tecnologias utilizadas (separadas por vírgula)"
-                            value={newExperience.technologies}
-                            onChange={(e) => setNewExperience({...newExperience, technologies: e.target.value})}
-                          />
-                        </div>
-                        <Button className="mt-4" onClick={handleAddExperience}>
-                          <Plus className="h-4 w-4 mr-2" />
-                          Adicionar Experiência
-                        </Button>
-                      </Card>
-                    </div>
-                  )}
-
-                  {/* Content Tab */}
-                  {activeTab === 'content' && (
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-bold text-vs-blue">Gerenciar Conteúdo</h3>
-                      
-                      <Card className="p-4">
-                        <h4 className="font-semibold mb-4 text-vs-green">Editar Textos</h4>
-                        <div className="space-y-4">
-                          <div>
-                            <label className="block text-sm font-medium mb-2">Resumo Profissional</label>
-                            <Textarea
-                              placeholder="Descrição profissional principal"
-                              rows={4}
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium mb-2">Objetivo Profissional</label>
-                            <Textarea
-                              placeholder="Objetivo de carreira"
-                              rows={3}
-                            />
-                          </div>
-                        </div>
-                        <Button className="mt-4">
-                          <Save className="h-4 w-4 mr-2" />
-                          Salvar Alterações
-                        </Button>
-                      </Card>
-                    </div>
-                  )}
-
-                  {/* Media Tab */}
-                  {activeTab === 'media' && (
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-bold text-vs-blue">Gerenciar Mídia</h3>
-                      
-                      <Card className="p-4">
-                        <h4 className="font-semibold mb-4 text-vs-green">Upload de Imagens</h4>
-                        <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                          <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                          <p className="text-muted-foreground mb-4">
-                            Arraste e solte imagens aqui ou clique para selecionar
-                          </p>
-                          <Button variant="outline">
-                            Selecionar Arquivos
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                      </Card>
+                      ))}
+                      <Button
+                        variant="outline"
+                        onClick={addTechnologyToProject}
+                        className="w-full"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Adicionar Tecnologia
+                      </Button>
                     </div>
-                  )}
+                  </div>
+                </div>
 
-                  {/* Settings Tab */}
-                  {activeTab === 'settings' && (
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-bold text-vs-blue">Configurações</h3>
-                      
-                      <Card className="p-4">
-                        <h4 className="font-semibold mb-4 text-vs-green">Informações de Contato</h4>
-                        <div className="space-y-4">
-                          <Input placeholder="Email" defaultValue="fabioinformacao@gmail.com" />
-                          <Input placeholder="Telefone" defaultValue="(21) 96464-1561" />
-                          <Input placeholder="LinkedIn" defaultValue="linkedin.com/in/fabio-figueiredo-295a8191" />
-                          <Input placeholder="GitHub" defaultValue="github.com/fabioffigueiredo" />
+                <Button onClick={addProject} className="w-full mt-4">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar Projeto
+                </Button>
+              </Card>
+
+              {/* Projects List */}
+              <div className="space-y-4">
+                {projects.map((project) => (
+                  <Card key={project.id} className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-vs-yellow">{project.name}</h4>
+                        <p className="text-sm text-muted-foreground mt-1">{project.description}</p>
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {project.technologies.map((tech: string) => (
+                            <span
+                              key={tech}
+                              className="px-2 py-1 text-xs rounded bg-vs-blue/10 text-vs-blue"
+                            >
+                              {tech}
+                            </span>
+                          ))}
                         </div>
-                        <Button className="mt-4">
-                          <Save className="h-4 w-4 mr-2" />
-                          Salvar Configurações
-                        </Button>
-                      </Card>
+                        <div className="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
+                          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="hover:text-vs-blue">
+                            GitHub
+                          </a>
+                          {project.liveUrl && (
+                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="hover:text-vs-green">
+                              Demo
+                            </a>
+                          )}
+                          <span>⭐ {project.stars}</span>
+                          <span>🍴 {project.forks}</span>
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => deleteProject(project.id)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
-                  )}
-                </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Skills Tab */}
+          {activeTab === 'skills' && (
+            <div className="space-y-6">
+              <div className="syntax-highlight">
+                <h3 className="text-lg font-semibold mb-4">
+                  <span className="syntax-green">// Gerenciar Skills</span>
+                </h3>
               </div>
 
-              {/* Footer */}
-              <div className="p-4 border-t border-border bg-muted/20">
-                <div className="text-center">
-                  <span className="text-sm syntax-highlight syntax-purple">{'}'}</span>
-                  <span className="text-xs text-muted-foreground ml-2">
-                    Painel administrativo para gerenciamento de conteúdo
-                  </span>
+              {/* Add New Skill */}
+              <Card className="p-4 border-vs-blue/30">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="skill-name">Nome da Skill</Label>
+                    <Input
+                      id="skill-name"
+                      value={newSkill.name}
+                      onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
+                      placeholder="Nome da skill"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="skill-percentage">Porcentagem</Label>
+                    <Input
+                      id="skill-percentage"
+                      type="number"
+                      value={newSkill.percentage}
+                      onChange={(e) =>
+                        setNewSkill({ ...newSkill, percentage: Number(e.target.value) })
+                      }
+                      placeholder="0-100"
+                      min="0"
+                      max="100"
+                    />
+                  </div>
                 </div>
+                <Button onClick={addSkill} className="w-full mt-4">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar Skill
+                </Button>
+              </Card>
+
+              {/* Skills List */}
+              <div className="space-y-4">
+                {skills.map((skill) => (
+                  <Card key={skill.id} className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-semibold text-vs-yellow">{skill.name}</h4>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {skill.percentage}% de proficiência
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => deleteSkill(skill.id)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
               </div>
-            </Card>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+            </div>
+          )}
+
+          {/* Experience Tab */}
+          {activeTab === 'experience' && (
+            <div className="space-y-6">
+              <div className="syntax-highlight">
+                <h3 className="text-lg font-semibold mb-4">
+                  <span className="syntax-green">// Gerenciar Experiências</span>
+                </h3>
+              </div>
+
+              {/* Add New Experience */}
+              <Card className="p-4 border-vs-blue/30">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="experience-title">Título</Label>
+                    <Input
+                      id="experience-title"
+                      value={newExperience.title}
+                      onChange={(e) => setNewExperience({ ...newExperience, title: e.target.value })}
+                      placeholder="Título da experiência"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="experience-company">Empresa</Label>
+                    <Input
+                      id="experience-company"
+                      value={newExperience.company}
+                      onChange={(e) =>
+                        setNewExperience({ ...newExperience, company: e.target.value })
+                      }
+                      placeholder="Nome da empresa"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="experience-start-date">Data de Início</Label>
+                    <Input
+                      id="experience-start-date"
+                      type="date"
+                      value={newExperience.startDate}
+                      onChange={(e) =>
+                        setNewExperience({ ...newExperience, startDate: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="experience-end-date">Data de Término</Label>
+                    <Input
+                      id="experience-end-date"
+                      type="date"
+                      value={newExperience.endDate}
+                      onChange={(e) =>
+                        setNewExperience({ ...newExperience, endDate: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="experience-description">Descrição</Label>
+                    <Textarea
+                      id="experience-description"
+                      value={newExperience.description}
+                      onChange={(e) =>
+                        setNewExperience({ ...newExperience, description: e.target.value })
+                      }
+                      placeholder="Descrição da experiência"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+                <Button onClick={addExperience} className="w-full mt-4">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar Experiência
+                </Button>
+              </Card>
+
+              {/* Experiences List */}
+              <div className="space-y-4">
+                {experiences.map((experience) => (
+                  <Card key={experience.id} className="p-4">
+                    <div className="flex flex-col">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-semibold text-vs-yellow">{experience.title}</h4>
+                          <p className="text-sm text-muted-foreground mt-1">{experience.company}</p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => deleteExperience(experience.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        {experience.startDate} - {experience.endDate}
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">{experience.description}</p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Education Tab */}
+          {activeTab === 'education' && (
+            <div className="space-y-6">
+              <div className="syntax-highlight">
+                <h3 className="text-lg font-semibold mb-4">
+                  <span className="syntax-green">// Gerenciar Formação Acadêmica</span>
+                </h3>
+              </div>
+
+              {/* Add New Education */}
+              <Card className="p-4 border-vs-blue/30">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="education-institution">Instituição</Label>
+                    <Input
+                      id="education-institution"
+                      value={newEducation.institution}
+                      onChange={(e) =>
+                        setNewEducation({ ...newEducation, institution: e.target.value })
+                      }
+                      placeholder="Nome da instituição"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="education-degree">Grau Acadêmico</Label>
+                    <Input
+                      id="education-degree"
+                      value={newEducation.degree}
+                      onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
+                      placeholder="Grau acadêmico"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="education-start-date">Data de Início</Label>
+                    <Input
+                      id="education-start-date"
+                      type="date"
+                      value={newEducation.startDate}
+                      onChange={(e) =>
+                        setNewEducation({ ...newEducation, startDate: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="education-end-date">Data de Término</Label>
+                    <Input
+                      id="education-end-date"
+                      type="date"
+                      value={newEducation.endDate}
+                      onChange={(e) =>
+                        setNewEducation({ ...newEducation, endDate: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="education-description">Descrição</Label>
+                    <Textarea
+                      id="education-description"
+                      value={newEducation.description}
+                      onChange={(e) =>
+                        setNewEducation({ ...newEducation, description: e.target.value })
+                      }
+                      placeholder="Descrição da formação acadêmica"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+                <Button onClick={addEducation} className="w-full mt-4">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar Formação
+                </Button>
+              </Card>
+
+              {/* Education List */}
+              <div className="space-y-4">
+                {education.map((educationItem) => (
+                  <Card key={educationItem.id} className="p-4">
+                    <div className="flex flex-col">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-semibold text-vs-yellow">{educationItem.degree}</h4>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {educationItem.institution}
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => deleteEducation(educationItem.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        {educationItem.startDate} - {educationItem.endDate}
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        {educationItem.description}
+                      </p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 border-t border-border bg-card/50">
+          <div className="syntax-highlight text-center">
+            <span className="syntax-purple">{'}'}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,6 +1,7 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Code2, User, Briefcase, BookOpen, Award, BarChart3, Settings } from 'lucide-react';
+import { Code2, User, Briefcase, BookOpen, Award, BarChart3, Settings, FolderOpen } from 'lucide-react';
 
 interface NavigationProps {
   activeSection: string;
@@ -14,6 +15,7 @@ const Navigation = ({ activeSection, onSectionChange, isAdmin, onToggleAdmin }: 
     { id: 'hero', label: 'main()', icon: Code2 },
     { id: 'about', label: 'about()', icon: User },
     { id: 'skills', label: 'skills()', icon: BookOpen },
+    { id: 'projects', label: 'projects()', icon: FolderOpen },
     { id: 'experience', label: 'experience()', icon: Briefcase },
     { id: 'education', label: 'education()', icon: Award },
     { id: 'dashboard', label: 'analytics()', icon: BarChart3 },

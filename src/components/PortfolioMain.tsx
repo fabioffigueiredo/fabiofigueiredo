@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navigation from './Navigation';
 import HeroSection from './HeroSection';
 import AboutSection from './AboutSection';
 import SkillsDashboard from './SkillsDashboard';
+import ProjectsSection from './ProjectsSection';
 import ExperienceSection from './ExperienceSection';
 import EducationSection from './EducationSection';
 import AITools from './AITools';
@@ -28,7 +30,7 @@ const PortfolioMain = () => {
   // Update active section based on scroll position
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['hero', 'about', 'skills', 'experience', 'education', 'dashboard', 'ai-tools'];
+      const sections = ['hero', 'about', 'skills', 'projects', 'experience', 'education', 'dashboard', 'ai-tools'];
       const scrollPosition = window.scrollY + 100;
 
       for (const section of sections) {
@@ -72,6 +74,11 @@ const PortfolioMain = () => {
         {/* Skills Dashboard */}
         <section id="skills">
           <SkillsDashboard />
+        </section>
+
+        {/* Projects Section */}
+        <section id="projects">
+          <ProjectsSection />
         </section>
 
         {/* Experience Section */}
