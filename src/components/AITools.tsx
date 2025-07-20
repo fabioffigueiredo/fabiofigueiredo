@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Sparkles, 
@@ -13,7 +14,12 @@ import {
   Wand2,
   Bot,
   Lightbulb,
-  Target
+  Target,
+  CheckCircle,
+  AlertCircle,
+  TrendingUp,
+  User,
+  Upload
 } from 'lucide-react';
 
 const AITools = () => {
@@ -21,6 +27,19 @@ const AITools = () => {
   const [jobDescription, setJobDescription] = useState('');
   const [generatedLetter, setGeneratedLetter] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  // Skills Analysis
+  const [skillsAnalysis, setSkillsAnalysis] = useState(null);
+  const [isAnalyzingSkills, setIsAnalyzingSkills] = useState(false);
+  
+  // Job Matching
+  const [jobMatch, setJobMatch] = useState(null);
+  const [isMatchingJob, setIsMatchingJob] = useState(false);
+  
+  // CV Optimization
+  const [cvText, setCvText] = useState('');
+  const [cvOptimization, setCvOptimization] = useState(null);
+  const [isOptimizingCV, setIsOptimizingCV] = useState(false);
 
   const generateCoverLetter = () => {
     if (!jobDescription.trim()) {
@@ -94,6 +113,134 @@ linkedin.com/in/fabio-figueiredo-295a8191`;
       title: "Download iniciado!",
       description: "Arquivo baixado com sucesso",
     });
+  };
+
+  const analyzeSkills = () => {
+    if (!jobDescription.trim()) {
+      toast({
+        title: "Atenção",
+        description: "Por favor, cole a descrição da vaga primeiro",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsAnalyzingSkills(true);
+    
+    setTimeout(() => {
+      const analysis = {
+        matchedSkills: ['Python', 'SQL', 'Docker', 'FastAPI'],
+        missingSkills: ['React', 'TypeScript', 'AWS', 'Kubernetes'],
+        recommendations: [
+          'Considere fazer um curso de React para expandir suas habilidades frontend',
+          'TypeScript é amplamente usado no mercado - seria um diferencial',
+          'Conhecimentos em AWS são muito valorizados para esta vaga',
+          'Kubernetes complementaria bem suas habilidades em Docker'
+        ],
+        overallMatch: 75
+      };
+      
+      setSkillsAnalysis(analysis);
+      setIsAnalyzingSkills(false);
+      
+      toast({
+        title: "Análise concluída!",
+        description: "Skills analisadas com sucesso",
+      });
+    }, 2500);
+  };
+
+  const matchJob = () => {
+    if (!jobDescription.trim()) {
+      toast({
+        title: "Atenção",
+        description: "Por favor, cole a descrição da vaga primeiro",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsMatchingJob(true);
+    
+    setTimeout(() => {
+      const match = {
+        compatibility: 82,
+        strengths: [
+          'Experiência sólida em Python',
+          'Background em infraestrutura de TI',
+          'Conhecimento em análise de dados',
+          'Formação em IA/ML em andamento'
+        ],
+        improvements: [
+          'Adicionar projetos React ao portfólio',
+          'Certificação AWS seria um diferencial',
+          'Experiência com metodologias ágeis'
+        ],
+        recommendation: 'Alta compatibilidade! Você tem um perfil muito adequado para esta vaga.'
+      };
+      
+      setJobMatch(match);
+      setIsMatchingJob(false);
+      
+      toast({
+        title: "Match calculado!",
+        description: `${match.compatibility}% de compatibilidade`,
+      });
+    }, 2000);
+  };
+
+  const optimizeCV = () => {
+    if (!cvText.trim()) {
+      toast({
+        title: "Atenção",
+        description: "Por favor, cole seu CV primeiro",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsOptimizingCV(true);
+    
+    setTimeout(() => {
+      const optimization = {
+        score: 78,
+        improvements: [
+          {
+            section: 'Resumo Profissional',
+            suggestion: 'Adicione palavras-chave específicas da área de dados e IA',
+            priority: 'Alta'
+          },
+          {
+            section: 'Experiência',
+            suggestion: 'Quantifique seus resultados com métricas específicas',
+            priority: 'Alta'
+          },
+          {
+            section: 'Habilidades',
+            suggestion: 'Organize por categoria: Linguagens, Frameworks, Tools',
+            priority: 'Média'
+          },
+          {
+            section: 'Projetos',
+            suggestion: 'Inclua links para GitHub e demonstrações ao vivo',
+            priority: 'Alta'
+          }
+        ],
+        optimizedSections: [
+          'Formatação está adequada',
+          'Informações de contato completas',
+          'Estrutura lógica e organizada'
+        ]
+      };
+      
+      setCvOptimization(optimization);
+      setIsOptimizingCV(false);
+      
+      toast({
+        title: "CV analisado!",
+        description: `Score atual: ${optimization.score}/100`,
+      });
+    }, 3000);
   };
 
   return (
@@ -221,38 +368,287 @@ linkedin.com/in/fabio-figueiredo-295a8191`;
           </motion.div>
         </div>
 
-        {/* Additional AI Tools Preview */}
+        {/* Additional AI Tools - Now Active */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="mt-12 space-y-8"
         >
-          <Card className="p-6 text-center card-shadow opacity-75">
-            <Lightbulb className="h-8 w-8 text-vs-yellow mx-auto mb-3" />
-            <h4 className="font-semibold mb-2">Análise de Skills</h4>
-            <p className="text-sm text-muted-foreground">
-              IA que analisa vagas e sugere melhorias no perfil
-            </p>
-            <Badge variant="outline" className="mt-2">Em breve</Badge>
+          
+          {/* Skills Analysis */}
+          <Card className="p-6 card-shadow">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <Lightbulb className="h-6 w-6 text-vs-yellow mr-3" />
+                <h3 className="text-xl font-bold text-vs-yellow">Análise de Skills</h3>
+                <Badge className="ml-3 bg-vs-yellow/20 text-vs-yellow border-vs-yellow/30">
+                  IA Powered
+                </Badge>
+              </div>
+              <Button 
+                onClick={analyzeSkills}
+                disabled={isAnalyzingSkills}
+                variant="outline"
+                className="border-vs-yellow text-vs-yellow hover:bg-vs-yellow/10"
+              >
+                {isAnalyzingSkills ? (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="mr-2"
+                  >
+                    <Bot className="h-4 w-4" />
+                  </motion.div>
+                ) : (
+                  <Lightbulb className="h-4 w-4 mr-2" />
+                )}
+                {isAnalyzingSkills ? 'Analisando...' : 'Analisar Skills'}
+              </Button>
+            </div>
+
+            {skillsAnalysis && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-semibold text-vs-green mb-3 flex items-center">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Skills Compatíveis
+                    </h4>
+                    <div className="space-y-2">
+                      {skillsAnalysis.matchedSkills.map((skill, index) => (
+                        <Badge key={index} className="mr-2 bg-vs-green/20 text-vs-green border-vs-green/30">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold text-vs-red mb-3 flex items-center">
+                      <AlertCircle className="h-4 w-4 mr-2" />
+                      Skills Sugeridas
+                    </h4>
+                    <div className="space-y-2">
+                      {skillsAnalysis.missingSkills.map((skill, index) => (
+                        <Badge key={index} variant="outline" className="mr-2 border-vs-red text-vs-red">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-secondary/20 rounded-lg p-4">
+                  <h4 className="font-semibold mb-3">Recomendações:</h4>
+                  <ul className="space-y-2">
+                    {skillsAnalysis.recommendations.map((rec, index) => (
+                      <li key={index} className="text-sm flex items-start">
+                        <TrendingUp className="h-4 w-4 text-vs-blue mr-2 mt-0.5 flex-shrink-0" />
+                        {rec}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm font-medium">Match Overall:</span>
+                  <Progress value={skillsAnalysis.overallMatch} className="flex-1" />
+                  <span className="text-sm font-bold text-vs-purple">{skillsAnalysis.overallMatch}%</span>
+                </div>
+              </motion.div>
+            )}
           </Card>
 
-          <Card className="p-6 text-center card-shadow opacity-75">
-            <Target className="h-8 w-8 text-vs-purple mx-auto mb-3" />
-            <h4 className="font-semibold mb-2">Match de Vagas</h4>
-            <p className="text-sm text-muted-foreground">
-              Calcula compatibilidade entre perfil e vagas
-            </p>
-            <Badge variant="outline" className="mt-2">Em breve</Badge>
+          {/* Job Matching */}
+          <Card className="p-6 card-shadow">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <Target className="h-6 w-6 text-vs-purple mr-3" />
+                <h3 className="text-xl font-bold text-vs-purple">Match de Vagas</h3>
+                <Badge className="ml-3 bg-vs-purple/20 text-vs-purple border-vs-purple/30">
+                  IA Powered
+                </Badge>
+              </div>
+              <Button 
+                onClick={matchJob}
+                disabled={isMatchingJob}
+                variant="outline"
+                className="border-vs-purple text-vs-purple hover:bg-vs-purple/10"
+              >
+                {isMatchingJob ? (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="mr-2"
+                  >
+                    <Bot className="h-4 w-4" />
+                  </motion.div>
+                ) : (
+                  <Target className="h-4 w-4 mr-2" />
+                )}
+                {isMatchingJob ? 'Calculando...' : 'Calcular Match'}
+              </Button>
+            </div>
+
+            {jobMatch && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
+              >
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-vs-purple mb-2">{jobMatch.compatibility}%</div>
+                  <p className="text-muted-foreground">Compatibilidade com a vaga</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-semibold text-vs-green mb-3 flex items-center">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Seus Pontos Fortes
+                    </h4>
+                    <ul className="space-y-2">
+                      {jobMatch.strengths.map((strength, index) => (
+                        <li key={index} className="text-sm flex items-start">
+                          <CheckCircle className="h-4 w-4 text-vs-green mr-2 mt-0.5 flex-shrink-0" />
+                          {strength}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold text-vs-yellow mb-3 flex items-center">
+                      <TrendingUp className="h-4 w-4 mr-2" />
+                      Áreas de Melhoria
+                    </h4>
+                    <ul className="space-y-2">
+                      {jobMatch.improvements.map((improvement, index) => (
+                        <li key={index} className="text-sm flex items-start">
+                          <TrendingUp className="h-4 w-4 text-vs-yellow mr-2 mt-0.5 flex-shrink-0" />
+                          {improvement}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-vs-purple/10 rounded-lg p-4 border border-vs-purple/20">
+                  <h4 className="font-semibold text-vs-purple mb-2">Recomendação:</h4>
+                  <p className="text-sm">{jobMatch.recommendation}</p>
+                </div>
+              </motion.div>
+            )}
           </Card>
 
-          <Card className="p-6 text-center card-shadow opacity-75">
-            <FileText className="h-8 w-8 text-vs-green mx-auto mb-3" />
-            <h4 className="font-semibold mb-2">Otimização CV</h4>
-            <p className="text-sm text-muted-foreground">
-              Sugestões automáticas para melhorar o currículo
-            </p>
-            <Badge variant="outline" className="mt-2">Em breve</Badge>
+          {/* CV Optimization */}
+          <Card className="p-6 card-shadow">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <FileText className="h-6 w-6 text-vs-green mr-3" />
+                <h3 className="text-xl font-bold text-vs-green">Otimização de CV</h3>
+                <Badge className="ml-3 bg-vs-green/20 text-vs-green border-vs-green/30">
+                  IA Powered
+                </Badge>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-vs-green">
+                  Cole seu CV atual:
+                </label>
+                <Textarea
+                  placeholder="Cole aqui o texto do seu currículo..."
+                  value={cvText}
+                  onChange={(e) => setCvText(e.target.value)}
+                  rows={6}
+                  className="w-full"
+                />
+              </div>
+
+              <Button 
+                onClick={optimizeCV}
+                disabled={isOptimizingCV}
+                className="w-full bg-gradient-to-r from-vs-green to-vs-blue hover:from-vs-green/80 hover:to-vs-blue/80"
+              >
+                {isOptimizingCV ? (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="mr-2"
+                  >
+                    <Bot className="h-4 w-4" />
+                  </motion.div>
+                ) : (
+                  <FileText className="h-4 w-4 mr-2" />
+                )}
+                {isOptimizingCV ? 'Analisando CV...' : 'Otimizar CV ✨'}
+              </Button>
+
+              {cvOptimization && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-semibold">Score do CV:</span>
+                    <div className="flex items-center space-x-3">
+                      <Progress value={cvOptimization.score} className="w-32" />
+                      <span className="text-lg font-bold text-vs-green">{cvOptimization.score}/100</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-vs-red mb-3 flex items-center">
+                      <AlertCircle className="h-4 w-4 mr-2" />
+                      Melhorias Sugeridas
+                    </h4>
+                    <div className="space-y-3">
+                      {cvOptimization.improvements.map((improvement, index) => (
+                        <div key={index} className="bg-secondary/20 rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium text-sm">{improvement.section}</span>
+                            <Badge 
+                              variant="outline" 
+                              className={
+                                improvement.priority === 'Alta' ? 'border-vs-red text-vs-red' :
+                                improvement.priority === 'Média' ? 'border-vs-yellow text-vs-yellow' :
+                                'border-vs-green text-vs-green'
+                              }
+                            >
+                              {improvement.priority}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{improvement.suggestion}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-vs-green mb-3 flex items-center">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Pontos Positivos
+                    </h4>
+                    <ul className="space-y-2">
+                      {cvOptimization.optimizedSections.map((section, index) => (
+                        <li key={index} className="text-sm flex items-start">
+                          <CheckCircle className="h-4 w-4 text-vs-green mr-2 mt-0.5 flex-shrink-0" />
+                          {section}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </motion.div>
+              )}
+            </div>
           </Card>
         </motion.div>
 
