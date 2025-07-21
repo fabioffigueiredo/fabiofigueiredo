@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redirecionando...</title>
+    <meta http-equiv="refresh" content="0; url=/fabiofigueiredo/" />
+    <script>
+      // Redirecionamento para a raiz do seu site preservando o hash (caso use rotas com #)
+      var l = window.location;
+      var path = l.pathname.replace(/^\/fabiofigueiredo/, '');
+      window.location.replace('/fabiofigueiredo/' + (path ? '#' + path : ''));
+    </script>
+  </head>
+  <body>
+    <p>Redirecionando para a página inicial...</p>
+  </body>
+</html>
