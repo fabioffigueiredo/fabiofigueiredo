@@ -189,13 +189,13 @@ const EducationSection = () => {
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-semibold text-vs-blue">Progresso Atual</span>
-                        <span className="text-xs text-vs-blue">75%</span>
+                        <span className="text-xs text-vs-blue">10%</span>
                       </div>
                       <div className="w-full bg-vs-blue/20 rounded-full h-1.5">
                         <motion.div
                           className="bg-vs-blue h-1.5 rounded-full"
                           initial={{ width: '0%' }}
-                          animate={inView ? { width: '75%' } : {}}
+                          animate={inView ? { width: '10%' } : {}}
                           transition={{ delay: index * 0.2 + 1, duration: 1.5 }}
                         />
                       </div>
