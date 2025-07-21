@@ -59,22 +59,7 @@ const Navigation = ({ activeSection, onSectionChange, isAdmin, onToggleAdmin }: 
             })}
           </div>
 
-          {/* Admin Toggle */}
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onToggleAdmin}
-              className={`syntax-highlight ${
-                isAdmin 
-                  ? 'bg-vs-orange/20 text-vs-orange border border-vs-orange/30' 
-                  : 'hover:bg-secondary/80'
-              }`}
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              <span className="syntax-red">{isAdmin ? 'admin.exit()' : 'admin.enter()'}</span>
-            </Button>
-          </div>
+          {/* Admin Toggle - Removed */}
         </div>
       </div>
 
