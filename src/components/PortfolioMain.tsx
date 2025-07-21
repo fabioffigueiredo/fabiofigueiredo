@@ -126,11 +126,19 @@ const PortfolioMain = () => {
             </motion.div>
             
             <div className="flex justify-center space-x-4 text-sm text-muted-foreground">
-              <span>© 2024 Fabio Figueiredo</span>
+              <span>© 2025 Fabio Figueiredo</span>
               <span>•</span>
               <span>Programador Python & Data Scientist</span>
               <span>•</span>
               <span>Rio de Janeiro, RJ</span>
+              <span>•</span>
+              <button 
+                onClick={() => setIsAdminMode(!isAdminMode)}
+                className="text-muted-foreground hover:text-primary transition-colors text-xs opacity-30 hover:opacity-100"
+                title="Admin"
+              >
+                •••
+              </button>
             </div>
           </div>
         </div>
