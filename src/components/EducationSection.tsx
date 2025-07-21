@@ -26,7 +26,7 @@ const EducationSection = () => {
       id: '1',
       degree: 'Pós-Graduação em Inteligência Artificial, Machine Learning e Deep Learning',
       institution: 'MIT (Massachusetts Institute of Technology)',
-      period: '2024 - Em Andamento',
+      period: '2025 - 2026',
       status: 'in-progress',
       description: 'Programa avançado focado em técnicas modernas de IA, aprendizado de máquina e deep learning.',
       highlights: [

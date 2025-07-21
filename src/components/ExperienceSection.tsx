@@ -27,7 +27,7 @@ const ExperienceSection = () => {
       title: 'Programador Python Júnior',
       company: 'Atual Posição',
       location: 'Rio de Janeiro, RJ',
-      period: '2024 - Presente',
+      period: '2025 - Presente',
       description: 'Desenvolvimento de soluções em Python com foco em extração e análise de dados de diversas fontes.',
       achievements: [
         'Implementação de sistemas de extração de dados via APIs',
@@ -42,7 +42,7 @@ const ExperienceSection = () => {
       title: 'Especialista em Infraestrutura de TI',
       company: 'Experiência Consolidada',
       location: 'Rio de Janeiro, RJ',
-      period: '2015 - 2024',
+      period: '2015 - 2025',
       description: 'Gestão e otimização de infraestrutura tecnológica, com experiência em suporte a mais de 50 pessoas.',
       achievements: [
         'Gerenciamento de infraestrutura complexa de TI',
