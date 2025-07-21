@@ -56,8 +56,8 @@ const EducationSection = () => {
     {
       id: '3',
       degree: 'Especialização em Análise de Dados',
-      institution: 'Cursos Complementares',
-      period: '2023 - 2024',
+      institution: 'DIO (Digital Innovation One)',
+      period: '2025 - 2025',
       status: 'completed',
       description: 'Formação complementar em análise de dados, estatística e visualização.',
       highlights: [
