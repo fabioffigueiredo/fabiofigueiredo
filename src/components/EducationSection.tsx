@@ -25,7 +25,7 @@ const EducationSection = () => {
     {
       id: '1',
       degree: 'Pós-Graduação em Inteligência Artificial, Machine Learning e Deep Learning',
-      institution: 'MIT (Massachusetts Institute of Technology)',
+      institution: 'Infnet',
       period: '2025 - 2026',
       status: 'in-progress',
       description: 'Programa avançado focado em técnicas modernas de IA, aprendizado de máquina e deep learning.',
@@ -39,6 +39,22 @@ const EducationSection = () => {
     },
     {
       id: '2',
+      degree: 'Bootcamp Python Santander',
+      institution: 'DIO (Digital Innovation One)',
+      period: '2025 - 2025',
+      status: 'completed',
+      description: 'Bootcamp intensivo focado em desenvolvimento Python e tecnologias modernas.',
+      highlights: [
+        'Linguagem Python',
+        'Programação Orientada a Objetos',
+        'Modularização',
+        'Banco de Dados',
+        'Docker',
+        'FastAPI'
+      ]
+    },
+    {
+      id: '3',
       degree: 'Especialização em Análise de Dados',
       institution: 'Cursos Complementares',
       period: '2023 - 2024',
@@ -53,17 +69,17 @@ const EducationSection = () => {
       ]
     },
     {
-      id: '3',
-      degree: 'Formação em Infraestrutura de TI',
-      institution: 'Certificações Técnicas',
-      period: '2015 - 2023',
+      id: '4',
+      degree: 'Bacharelado em Sistemas de Informação',
+      institution: 'Universidade Estácio',
+      period: '2015 - 2020',
       status: 'completed',
-      description: 'Base sólida em infraestrutura, sistemas e redes.',
+      description: 'Formação sólida em sistemas, desenvolvimento e gestão de tecnologia.',
       highlights: [
-        'Administração de Sistemas',
-        'Redes e Conectividade',
-        'Virtualização',
-        'Suporte Técnico Avançado',
+        'Desenvolvimento de Sistemas',
+        'Banco de Dados',
+        'Redes e Infraestrutura',
+        'Engenharia de Software',
         'Gestão de Projetos de TI'
       ]
     }
@@ -111,7 +127,7 @@ const EducationSection = () => {
         </motion.div>
 
         {/* Education Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {education.map((edu, index) => {
             const StatusIcon = getStatusIcon(edu.status);
             
@@ -232,7 +248,7 @@ const EducationSection = () => {
                 <div className="text-sm text-muted-foreground">Anos de Experiência</div>
               </div>
               <div className="p-4">
-                <div className="text-2xl font-bold text-vs-blue">MIT</div>
+                <div className="text-2xl font-bold text-vs-blue">Infnet</div>
                 <div className="text-sm text-muted-foreground">Pós-Graduação em IA</div>
               </div>
               <div className="p-4">

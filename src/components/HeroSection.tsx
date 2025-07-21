@@ -120,7 +120,7 @@ const HeroSection = () => {
                 Profissional em transição estratégica para <span className="text-vs-blue font-semibold">Programação Python</span>, 
                 <span className="text-vs-green font-semibold"> Inteligência Artificial</span> e 
                 <span className="text-vs-purple font-semibold"> Análise de Dados</span>. 
-                Pós-graduando em IA, ML e Deep Learning pelo MIT.
+                Pós-graduando em IA, ML e Deep Learning na Infnet.
               </motion.p>
             </div>
 
