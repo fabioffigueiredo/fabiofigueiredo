@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Github, Linkedin, Mail, MessageCircle } from 'lucide-react';
+import profilePhoto from '@/assets/profile-photo.jpeg';
 
 const HeroSection = () => {
   const socialLinks = [
@@ -49,9 +50,11 @@ const HeroSection = () => {
                 transition={{ duration: 2, repeat: Infinity }}
                 className="w-40 h-40 mx-auto lg:mx-0 rounded-full bg-gradient-to-r from-vs-blue to-vs-purple p-1"
               >
-                <div className="w-full h-full rounded-full bg-card flex items-center justify-center text-6xl font-bold text-vs-blue">
-                  FF
-                </div>
+                <img 
+                  src={profilePhoto} 
+                  alt="Fabio Figueiredo" 
+                  className="w-full h-full rounded-full object-cover"
+                />
               </motion.div>
             </div>
 

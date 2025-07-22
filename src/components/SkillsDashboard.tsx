@@ -204,7 +204,7 @@ const SkillsDashboard = () => {
                       rotate: { duration: 6, repeat: Infinity, ease: 'easeInOut' }
                     }}
                   >
-                    <Rocket className="h-8 w-8 text-vs-orange transform rotate-45" />
+                    <Rocket className="h-8 w-8 text-vs-orange transform -rotate-45" />
                     {/* Rocket trail */}
                     <motion.div
                       className="absolute top-2 left-2 w-2 h-8 bg-gradient-to-t from-vs-orange/60 to-transparent rounded-full"
