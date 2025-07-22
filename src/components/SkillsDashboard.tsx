@@ -24,6 +24,7 @@ const SkillsDashboard = () => {
     { name: 'Python', level: 98, category: 'backend', color: 'vs-blue' },
     { name: 'SQL Server', level: 75, category: 'database', color: 'vs-red' },
     { name: 'MariaDB', level: 75, category: 'database', color: 'vs-orange' },
+    { name: 'MongoDB', level: 70, category: 'database', color: 'vs-orange' },
     { name: 'Docker', level: 70, category: 'tools', color: 'vs-cyan' },
     { name: 'Django', level: 70, category: 'backend', color: 'vs-green' },
     { name: 'FastAPI', level: 60, category: 'backend', color: 'vs-yellow' },

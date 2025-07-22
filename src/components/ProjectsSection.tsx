@@ -45,6 +45,15 @@ const ProjectsSection = () => {
       technologies: ['Power BI', 'SQL', 'DAX'],
       stars: 8,
       forks: 3
+    },
+    {
+      id: '4',
+      name: 'Analisador de Logs Windows Server',
+      description: 'Projeto voltada a analise de logs de sistema do Windows server, com implementação de monitoramento em tempo real. Estudo de Docker e Django',
+      githubUrl: 'https://github.com/fabioffigueiredo/Analisador-de-Logs-Windows-Server',
+      technologies: ['Docker', 'Django', 'Python'],
+      stars: 1,
+      forks: 0
     }
   ]);
 

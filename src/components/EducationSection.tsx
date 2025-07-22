@@ -249,7 +249,7 @@ const EducationSection = () => {
               </div>
               <div className="p-4">
                 <div className="text-2xl font-bold text-vs-blue">Infnet</div>
-                <div className="text-sm text-muted-foreground">Pós-Graduação em IA</div>
+                <div className="text-sm text-muted-foreground">Pós-MIT em Machine Learning, IA e Deep Learning</div>
               </div>
               <div className="p-4">
                 <div className="text-2xl font-bold text-vs-purple">∞</div>
