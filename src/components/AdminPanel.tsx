@@ -1,1304 +1,1024 @@
 import { useState, useEffect } from 'react';
-import { X, Plus, Trash2, BookOpen, Briefcase, Award, FolderOpen, Edit2, User, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Card } from '@/components/ui/card';
-import { toast } from "@/components/ui/use-toast"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { Trash2, Plus, Save, RefreshCw } from 'lucide-react';
 
-interface AdminPanelProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-interface Skill {
+interface HeroContent {
   id: string;
   name: string;
-  percentage: number;
+  role: string;
+  focus: string;
+  experience_years: number;
+  description: string;
+  profile_image_url: string | null;
+}
+
+interface SocialLink {
+  id: string;
+  platform: string;
+  url: string;
+  icon: string;
+  color: string;
+  display_order: number;
+  is_active: boolean;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  github_url: string;
+  live_url: string | null;
+  technologies: string[];
+  stars: number;
+  forks: number;
+  display_order: number;
+  is_active: boolean;
 }
 
 interface Experience {
   id: string;
   title: string;
   company: string;
-  startDate: string;
-  endDate: string;
+  location: string;
+  period: string;
   description: string;
+  achievements: string[];
+  technologies: string[];
+  display_order: number;
+  is_active: boolean;
 }
 
-interface Education {
+interface AboutContent {
   id: string;
-  institution: string;
-  degree: string;
-  startDate: string;
-  endDate: string;
-  description: string;
+  section_title: string;
+  personal_story: string;
+  support_experience: string;
+  people_supported: number;
+  satisfaction_rate: number;
+  professional_goal: string;
 }
 
-interface PersonalInfo {
-  name: string;
+interface SoftSkill {
+  id: string;
   title: string;
   description: string;
-  email: string;
-  phone: string;
-  location: string;
-  github: string;
-  linkedin: string;
+  icon: string;
+  color: string;
+  display_order: number;
+  is_active: boolean;
 }
 
-const AdminPanel = ({ isOpen, onClose }: AdminPanelProps) => {
-  const [activeTab, setActiveTab] = useState('personal');
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [newSkill, setNewSkill] = useState({ name: '', percentage: 0 });
-  const [editingSkill, setEditingSkill] = useState<string | null>(null);
-  const [editSkillData, setEditSkillData] = useState({ name: '', percentage: 0 });
+interface TechFocus {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  technologies: string[];
+  display_order: number;
+  is_active: boolean;
+}
+
+const AdminPanel = () => {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  
+  // Estado para Hero Content
+  const [heroContent, setHeroContent] = useState<HeroContent | null>(null);
+  
+  // Estado para Social Links
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [newSocialLink, setNewSocialLink] = useState({
+    platform: '',
+    url: '',
+    icon: '',
+    color: '',
+    display_order: 0
+  });
+  
+  // Estado para About Content
+  const [aboutContent, setAboutContent] = useState<AboutContent | null>(null);
+  
+  // Estado para Soft Skills
+  const [softSkills, setSoftSkills] = useState<SoftSkill[]>([]);
+  const [newSoftSkill, setNewSoftSkill] = useState({
+    title: '',
+    description: '',
+    icon: '',
+    color: '',
+    display_order: 0
+  });
+  
+  // Estado para Tech Focus
+  const [techFocus, setTechFocus] = useState<TechFocus[]>([]);
+  const [newTechFocus, setNewTechFocus] = useState({
+    title: '',
+    description: '',
+    icon: '',
+    technologies: [] as string[],
+    display_order: 0
+  });
+  
+  // Estado para Projects
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [newProject, setNewProject] = useState({
+    name: '',
+    description: '',
+    github_url: '',
+    live_url: '',
+    technologies: [] as string[],
+    stars: 0,
+    forks: 0,
+    display_order: 0
+  });
+  
+  // Estado para Experiences
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [newExperience, setNewExperience] = useState({
     title: '',
     company: '',
-    startDate: '',
-    endDate: '',
-    description: '',
-  });
-  const [editingExperience, setEditingExperience] = useState<string | null>(null);
-  const [editExperienceData, setEditExperienceData] = useState({
-    title: '',
-    company: '',
-    startDate: '',
-    endDate: '',
-    description: '',
-  });
-  const [education, setEducation] = useState<Education[]>([]);
-  const [newEducation, setNewEducation] = useState({
-    institution: '',
-    degree: '',
-    startDate: '',
-    endDate: '',
-    description: '',
-  });
-  const [editingEducation, setEditingEducation] = useState<string | null>(null);
-  const [editEducationData, setEditEducationData] = useState({
-    institution: '',
-    degree: '',
-    startDate: '',
-    endDate: '',
-    description: '',
-  });
-  
-  // Projects state
-  const [projects, setProjects] = useState<any[]>([]);
-  const [newProject, setNewProject] = useState({
-    name: '',
-    description: '',
-    githubUrl: '',
-    liveUrl: '',
-    technologies: [] as string[],
-    stars: 0,
-    forks: 0
-  });
-  const [editingProject, setEditingProject] = useState<string | null>(null);
-  const [editProjectData, setEditProjectData] = useState({
-    name: '',
-    description: '',
-    githubUrl: '',
-    liveUrl: '',
-    technologies: [] as string[],
-    stars: 0,
-    forks: 0
-  });
-
-  // Personal info state
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    name: '',
-    title: '',
-    description: '',
-    email: '',
-    phone: '',
     location: '',
-    github: '',
-    linkedin: '',
+    period: '',
+    description: '',
+    achievements: [] as string[],
+    technologies: [] as string[],
+    display_order: 0
   });
 
+  // Carregamento inicial dos dados
   useEffect(() => {
-    // Load skills
-    const savedSkills = localStorage.getItem('portfolioSkills');
-    if (savedSkills) {
-      setSkills(JSON.parse(savedSkills));
-    }
-
-    // Load experiences
-    const savedExperiences = localStorage.getItem('portfolioExperiences');
-    if (savedExperiences) {
-      setExperiences(JSON.parse(savedExperiences));
-    }
-
-    // Load education
-    const savedEducation = localStorage.getItem('portfolioEducation');
-    if (savedEducation) {
-      setEducation(JSON.parse(savedEducation));
-    }
-
-    // Load personal info
-    const savedPersonalInfo = localStorage.getItem('portfolioPersonalInfo');
-    if (savedPersonalInfo) {
-      setPersonalInfo(JSON.parse(savedPersonalInfo));
-    }
+    loadAllData();
   }, []);
 
-  // Load projects
-  useEffect(() => {
-    const savedProjects = localStorage.getItem('portfolioProjects');
-    if (savedProjects) {
-      setProjects(JSON.parse(savedProjects));
-    }
-  }, []);
-
-  const addSkill = () => {
-    if (newSkill.name && newSkill.percentage >= 0 && newSkill.percentage <= 100) {
-      const skill = { ...newSkill, id: Date.now().toString() };
-      const updatedSkills = [...skills, skill];
-      setSkills(updatedSkills);
-      localStorage.setItem('portfolioSkills', JSON.stringify(updatedSkills));
-      setNewSkill({ name: '', percentage: 0 });
-       toast({
-        title: "Skill adicionada!",
-        description: "A skill foi adicionada com sucesso.",
-      });
-    }
-  };
-
-  const deleteSkill = (id: string) => {
-    const updatedSkills = skills.filter(skill => skill.id !== id);
-    setSkills(updatedSkills);
-    localStorage.setItem('portfolioSkills', JSON.stringify(updatedSkills));
-     toast({
-        title: "Skill removida!",
-        description: "A skill foi removida com sucesso.",
-      });
-  };
-
-  const startEditingSkill = (skill: Skill) => {
-    setEditingSkill(skill.id);
-    setEditSkillData({ name: skill.name, percentage: skill.percentage });
-  };
-
-  const saveSkillEdit = () => {
-    if (editingSkill) {
-      const updatedSkills = skills.map(skill =>
-        skill.id === editingSkill 
-          ? { ...skill, name: editSkillData.name, percentage: editSkillData.percentage }
-          : skill
-      );
-      setSkills(updatedSkills);
-      localStorage.setItem('portfolioSkills', JSON.stringify(updatedSkills));
-      setEditingSkill(null);
+  const loadAllData = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        loadHeroContent(),
+        loadSocialLinks(),
+        loadAboutContent(),
+        loadSoftSkills(),
+        loadTechFocus(),
+        loadProjects(),
+        loadExperiences()
+      ]);
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
       toast({
-        title: "Skill atualizada!",
-        description: "A skill foi atualizada com sucesso.",
+        title: 'Erro',
+        description: 'Falha ao carregar dados do painel',
+        variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const cancelSkillEdit = () => {
-    setEditingSkill(null);
-    setEditSkillData({ name: '', percentage: 0 });
-  };
-
-  const addExperience = () => {
-    if (newExperience.title && newExperience.company && newExperience.startDate && newExperience.endDate && newExperience.description) {
-      const experience = { ...newExperience, id: Date.now().toString() };
-      const updatedExperiences = [...experiences, experience];
-      setExperiences(updatedExperiences);
-      localStorage.setItem('portfolioExperiences', JSON.stringify(updatedExperiences));
-      setNewExperience({ title: '', company: '', startDate: '', endDate: '', description: '' });
-       toast({
-        title: "Experiência adicionada!",
-        description: "A experiência foi adicionada com sucesso.",
-      });
+  const loadHeroContent = async () => {
+    const { data, error } = await supabase
+      .from('hero_content')
+      .select('*')
+      .limit(1)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') {
+      console.error('Erro ao carregar hero content:', error);
+      return;
     }
+    
+    setHeroContent(data);
   };
 
-  const deleteExperience = (id: string) => {
-    const updatedExperiences = experiences.filter(experience => experience.id !== id);
-    setExperiences(updatedExperiences);
-    localStorage.setItem('portfolioExperiences', JSON.stringify(updatedExperiences));
-     toast({
-        title: "Experiência removida!",
-        description: "A experiência foi removida com sucesso.",
-      });
+  const loadSocialLinks = async () => {
+    const { data, error } = await supabase
+      .from('social_links')
+      .select('*')
+      .order('display_order');
+    
+    if (error) {
+      console.error('Erro ao carregar social links:', error);
+      return;
+    }
+    
+    setSocialLinks(data || []);
   };
 
-  const startEditingExperience = (experience: Experience) => {
-    setEditingExperience(experience.id);
-    setEditExperienceData({
-      title: experience.title,
-      company: experience.company,
-      startDate: experience.startDate,
-      endDate: experience.endDate,
-      description: experience.description,
-    });
+  const loadAboutContent = async () => {
+    const { data, error } = await supabase
+      .from('about_content')
+      .select('*')
+      .limit(1)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') {
+      console.error('Erro ao carregar about content:', error);
+      return;
+    }
+    
+    setAboutContent(data);
   };
 
-  const saveExperienceEdit = () => {
-    if (editingExperience) {
-      const updatedExperiences = experiences.map(exp =>
-        exp.id === editingExperience ? { ...exp, ...editExperienceData } : exp
-      );
-      setExperiences(updatedExperiences);
-      localStorage.setItem('portfolioExperiences', JSON.stringify(updatedExperiences));
-      setEditingExperience(null);
+  const loadSoftSkills = async () => {
+    const { data, error } = await supabase
+      .from('soft_skills')
+      .select('*')
+      .order('display_order');
+    
+    if (error) {
+      console.error('Erro ao carregar soft skills:', error);
+      return;
+    }
+    
+    setSoftSkills(data || []);
+  };
+
+  const loadTechFocus = async () => {
+    const { data, error } = await supabase
+      .from('tech_focus')
+      .select('*')
+      .order('display_order');
+    
+    if (error) {
+      console.error('Erro ao carregar tech focus:', error);
+      return;
+    }
+    
+    setTechFocus(data || []);
+  };
+
+  const loadProjects = async () => {
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .order('display_order');
+    
+    if (error) {
+      console.error('Erro ao carregar projects:', error);
+      return;
+    }
+    
+    setProjects(data || []);
+  };
+
+  const loadExperiences = async () => {
+    const { data, error } = await supabase
+      .from('experiences')
+      .select('*')
+      .order('display_order');
+    
+    if (error) {
+      console.error('Erro ao carregar experiences:', error);
+      return;
+    }
+    
+    setExperiences(data || []);
+  };
+
+  // Funções para Hero Content
+  const saveHeroContent = async () => {
+    if (!heroContent) return;
+
+    const { error } = await supabase
+      .from('hero_content')
+      .upsert(heroContent);
+
+    if (error) {
+      console.error('Erro ao salvar hero content:', error);
       toast({
-        title: "Experiência atualizada!",
-        description: "A experiência foi atualizada com sucesso.",
+        title: 'Erro',
+        description: 'Falha ao salvar informações do hero',
+        variant: 'destructive',
       });
+      return;
     }
-  };
 
-  const cancelExperienceEdit = () => {
-    setEditingExperience(null);
-    setEditExperienceData({ title: '', company: '', startDate: '', endDate: '', description: '' });
-  };
-
-  const addEducation = () => {
-    if (newEducation.institution && newEducation.degree && newEducation.startDate && newEducation.endDate && newEducation.description) {
-      const educationItem = { ...newEducation, id: Date.now().toString() };
-      const updatedEducation = [...education, educationItem];
-      setEducation(updatedEducation);
-      localStorage.setItem('portfolioEducation', JSON.stringify(updatedEducation));
-      setNewEducation({ institution: '', degree: '', startDate: '', endDate: '', description: '' });
-       toast({
-        title: "Educação adicionada!",
-        description: "A educação foi adicionada com sucesso.",
-      });
-    }
-  };
-
-  const deleteEducation = (id: string) => {
-    const updatedEducation = education.filter(educationItem => educationItem.id !== id);
-    setEducation(updatedEducation);
-    localStorage.setItem('portfolioEducation', JSON.stringify(updatedEducation));
-     toast({
-        title: "Educação removida!",
-        description: "A educação foi removida com sucesso.",
-      });
-  };
-
-  const startEditingEducation = (educationItem: Education) => {
-    setEditingEducation(educationItem.id);
-    setEditEducationData({
-      institution: educationItem.institution,
-      degree: educationItem.degree,
-      startDate: educationItem.startDate,
-      endDate: educationItem.endDate,
-      description: educationItem.description,
-    });
-  };
-
-  const saveEducationEdit = () => {
-    if (editingEducation) {
-      const updatedEducation = education.map(edu =>
-        edu.id === editingEducation ? { ...edu, ...editEducationData } : edu
-      );
-      setEducation(updatedEducation);
-      localStorage.setItem('portfolioEducation', JSON.stringify(updatedEducation));
-      setEditingEducation(null);
-      toast({
-        title: "Educação atualizada!",
-        description: "A educação foi atualizada com sucesso.",
-      });
-    }
-  };
-
-  const cancelEducationEdit = () => {
-    setEditingEducation(null);
-    setEditEducationData({ institution: '', degree: '', startDate: '', endDate: '', description: '' });
-  };
-
-  // Project functions
-  const addProject = () => {
-    if (newProject.name && newProject.description && newProject.githubUrl) {
-      const project = {
-        ...newProject,
-        id: Date.now().toString(),
-        technologies: newProject.technologies.filter(tech => tech.trim() !== '')
-      };
-      const updatedProjects = [...projects, project];
-      setProjects(updatedProjects);
-      localStorage.setItem('portfolioProjects', JSON.stringify(updatedProjects));
-      setNewProject({
-        name: '',
-        description: '',
-        githubUrl: '',
-        liveUrl: '',
-        technologies: [],
-        stars: 0,
-        forks: 0
-      });
-      toast({
-        title: "Projeto adicionado!",
-        description: "O projeto foi adicionado com sucesso.",
-      });
-    }
-  };
-
-  const deleteProject = (id: string) => {
-    const updatedProjects = projects.filter(project => project.id !== id);
-    setProjects(updatedProjects);
-    localStorage.setItem('portfolioProjects', JSON.stringify(updatedProjects));
     toast({
-      title: "Projeto removido!",
-      description: "O projeto foi removido com sucesso.",
+      title: 'Sucesso',
+      description: 'Informações do hero salvas com sucesso',
     });
   };
 
-  const startEditingProject = (project: any) => {
-    setEditingProject(project.id);
-    setEditProjectData({
-      name: project.name,
-      description: project.description,
-      githubUrl: project.githubUrl,
-      liveUrl: project.liveUrl,
-      technologies: [...project.technologies],
-      stars: project.stars,
-      forks: project.forks,
-    });
-  };
-
-  const saveProjectEdit = () => {
-    if (editingProject) {
-      const updatedProjects = projects.map(proj =>
-        proj.id === editingProject ? { ...proj, ...editProjectData } : proj
-      );
-      setProjects(updatedProjects);
-      localStorage.setItem('portfolioProjects', JSON.stringify(updatedProjects));
-      setEditingProject(null);
+  // Funções para Social Links
+  const addSocialLink = async () => {
+    if (!newSocialLink.platform || !newSocialLink.url) {
       toast({
-        title: "Projeto atualizado!",
-        description: "O projeto foi atualizado com sucesso.",
+        title: 'Erro',
+        description: 'Preencha todos os campos obrigatórios',
+        variant: 'destructive',
       });
+      return;
     }
+
+    const { error } = await supabase
+      .from('social_links')
+      .insert([newSocialLink]);
+
+    if (error) {
+      console.error('Erro ao adicionar social link:', error);
+      toast({
+        title: 'Erro',
+        description: 'Falha ao adicionar link social',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setNewSocialLink({
+      platform: '',
+      url: '',
+      icon: '',
+      color: '',
+      display_order: 0
+    });
+
+    await loadSocialLinks();
+    toast({
+      title: 'Sucesso',
+      description: 'Link social adicionado com sucesso',
+    });
   };
 
-  const cancelProjectEdit = () => {
-    setEditingProject(null);
-    setEditProjectData({
+  const deleteSocialLink = async (id: string) => {
+    const { error } = await supabase
+      .from('social_links')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erro ao deletar social link:', error);
+      toast({
+        title: 'Erro',
+        description: 'Falha ao deletar link social',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    await loadSocialLinks();
+    toast({
+      title: 'Sucesso',
+      description: 'Link social removido com sucesso',
+    });
+  };
+
+  // Funções para About Content
+  const saveAboutContent = async () => {
+    if (!aboutContent) return;
+
+    const { error } = await supabase
+      .from('about_content')
+      .upsert(aboutContent);
+
+    if (error) {
+      console.error('Erro ao salvar about content:', error);
+      toast({
+        title: 'Erro',
+        description: 'Falha ao salvar informações sobre',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    toast({
+      title: 'Sucesso',
+      description: 'Informações sobre salvas com sucesso',
+    });
+  };
+
+  // Funções para Projects
+  const addProject = async () => {
+    if (!newProject.name || !newProject.description || !newProject.github_url) {
+      toast({
+        title: 'Erro',
+        description: 'Preencha todos os campos obrigatórios',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from('projects')
+      .insert([newProject]);
+
+    if (error) {
+      console.error('Erro ao adicionar projeto:', error);
+      toast({
+        title: 'Erro',
+        description: 'Falha ao adicionar projeto',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setNewProject({
       name: '',
       description: '',
-      githubUrl: '',
-      liveUrl: '',
+      github_url: '',
+      live_url: '',
       technologies: [],
       stars: 0,
-      forks: 0
+      forks: 0,
+      display_order: 0
     });
-  };
 
-  const savePersonalInfo = () => {
-    localStorage.setItem('portfolioPersonalInfo', JSON.stringify(personalInfo));
+    await loadProjects();
     toast({
-      title: "Informações salvas!",
-      description: "As informações pessoais foram salvas com sucesso.",
+      title: 'Sucesso',
+      description: 'Projeto adicionado com sucesso',
     });
   };
 
-  const addTechnologyToProject = () => {
-    setNewProject({
-      ...newProject,
-      technologies: [...newProject.technologies, '']
+  const deleteProject = async (id: string) => {
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erro ao deletar projeto:', error);
+      toast({
+        title: 'Erro',
+        description: 'Falha ao deletar projeto',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    await loadProjects();
+    toast({
+      title: 'Sucesso',
+      description: 'Projeto removido com sucesso',
     });
   };
 
-  const updateProjectTechnology = (index: number, value: string) => {
-    const updatedTechnologies = [...newProject.technologies];
-    updatedTechnologies[index] = value;
-    setNewProject({
-      ...newProject,
-      technologies: updatedTechnologies
-    });
-  };
+  // Função auxiliar para arrays de strings
+  const arrayToString = (arr: string[]) => arr.join(', ');
+  const stringToArray = (str: string) => str.split(',').map(s => s.trim()).filter(s => s.length > 0);
 
-  if (!isOpen) return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background py-20 flex items-center justify-center">
+        <div className="flex items-center space-x-2">
+          <RefreshCw className="h-6 w-6 animate-spin text-primary" />
+          <span>Carregando painel administrativo...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-card rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="p-6 border-b border-border bg-card/50">
-          <div className="flex items-center justify-between">
-            <div className="syntax-highlight">
-              <h2 className="text-2xl font-bold">
-                <span className="syntax-blue">class</span>{' '}
-                <span className="syntax-yellow">AdminPanel</span>{' '}
-                <span className="syntax-purple">{'{'}</span>
-              </h2>
-            </div>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+    <div className="min-h-screen bg-background py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-primary">Painel Administrativo</h1>
+          <p className="text-muted-foreground mt-2">
+            Gerencie todos os conteúdos do seu portfólio
+          </p>
         </div>
 
-        {/* Tabs */}
-        <div className="border-b border-border bg-card/30">
-          <div className="flex space-x-1 p-2">
-            {[
-              { id: 'personal', label: 'Pessoal', icon: User },
-              { id: 'skills', label: 'Skills', icon: BookOpen },
-              { id: 'projects', label: 'Projetos', icon: FolderOpen },
-              { id: 'experience', label: 'Experiência', icon: Briefcase },
-              { id: 'education', label: 'Educação', icon: Award }
-            ].map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <Button
-                  key={tab.id}
-                  variant={activeTab === tab.id ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`syntax-highlight ${
-                    activeTab === tab.id 
-                      ? 'bg-vs-blue/20 text-vs-blue border border-vs-blue/30' 
-                      : 'hover:bg-secondary/80'
-                  }`}
-                >
-                  <Icon className="h-4 w-4 mr-2" />
-                  <span className="syntax-purple">{tab.label}</span>
-                </Button>
-              );
-            })}
-          </div>
-        </div>
+        <Tabs defaultValue="hero" className="space-y-6">
+          <TabsList className="grid grid-cols-6 lg:grid-cols-6">
+            <TabsTrigger value="hero">Hero</TabsTrigger>
+            <TabsTrigger value="about">Sobre</TabsTrigger>
+            <TabsTrigger value="skills">Skills</TabsTrigger>
+            <TabsTrigger value="projects">Projetos</TabsTrigger>
+            <TabsTrigger value="experience">Experiência</TabsTrigger>
+            <TabsTrigger value="social">Social</TabsTrigger>
+          </TabsList>
 
-        {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[60vh]">
-          {/* Personal Info Tab */}
-          {activeTab === 'personal' && (
-            <div className="space-y-6">
-              <div className="syntax-highlight">
-                <h3 className="text-lg font-semibold mb-4">
-                  <span className="syntax-green">// Informações Pessoais</span>
-                </h3>
-              </div>
+          {/* Hero Content */}
+          <TabsContent value="hero" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Seção Hero</CardTitle>
+                <CardDescription>
+                  Edite as informações principais da página inicial
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {heroContent && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="name">Nome</Label>
+                        <Input
+                          id="name"
+                          value={heroContent.name}
+                          onChange={(e) => setHeroContent({
+                            ...heroContent,
+                            name: e.target.value
+                          })}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="role">Cargo</Label>
+                        <Input
+                          id="role"
+                          value={heroContent.role}
+                          onChange={(e) => setHeroContent({
+                            ...heroContent,
+                            role: e.target.value
+                          })}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="focus">Foco</Label>
+                        <Input
+                          id="focus"
+                          value={heroContent.focus}
+                          onChange={(e) => setHeroContent({
+                            ...heroContent,
+                            focus: e.target.value
+                          })}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="experience_years">Anos de Experiência</Label>
+                        <Input
+                          id="experience_years"
+                          type="number"
+                          value={heroContent.experience_years}
+                          onChange={(e) => setHeroContent({
+                            ...heroContent,
+                            experience_years: parseInt(e.target.value) || 0
+                          })}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="description">Descrição</Label>
+                      <Textarea
+                        id="description"
+                        value={heroContent.description}
+                        onChange={(e) => setHeroContent({
+                          ...heroContent,
+                          description: e.target.value
+                        })}
+                        rows={3}
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="profile_image_url">URL da Foto de Perfil</Label>
+                      <Input
+                        id="profile_image_url"
+                        value={heroContent.profile_image_url || ''}
+                        onChange={(e) => setHeroContent({
+                          ...heroContent,
+                          profile_image_url: e.target.value
+                        })}
+                      />
+                    </div>
+                    
+                    <Button onClick={saveHeroContent} className="w-full">
+                      <Save className="h-4 w-4 mr-2" />
+                      Salvar Hero
+                    </Button>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-              <Card className="p-4 border-vs-blue/30">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* About Content */}
+          <TabsContent value="about" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Seção Sobre</CardTitle>
+                <CardDescription>
+                  Edite as informações da seção sobre
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {aboutContent && (
+                  <>
+                    <div>
+                      <Label htmlFor="personal_story">História Pessoal</Label>
+                      <Textarea
+                        id="personal_story"
+                        value={aboutContent.personal_story}
+                        onChange={(e) => setAboutContent({
+                          ...aboutContent,
+                          personal_story: e.target.value
+                        })}
+                        rows={4}
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="support_experience">Experiência de Suporte</Label>
+                      <Textarea
+                        id="support_experience"
+                        value={aboutContent.support_experience}
+                        onChange={(e) => setAboutContent({
+                          ...aboutContent,
+                          support_experience: e.target.value
+                        })}
+                        rows={3}
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="people_supported">Pessoas Apoiadas</Label>
+                        <Input
+                          id="people_supported"
+                          type="number"
+                          value={aboutContent.people_supported}
+                          onChange={(e) => setAboutContent({
+                            ...aboutContent,
+                            people_supported: parseInt(e.target.value) || 0
+                          })}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="satisfaction_rate">Taxa de Satisfação (%)</Label>
+                        <Input
+                          id="satisfaction_rate"
+                          type="number"
+                          value={aboutContent.satisfaction_rate}
+                          onChange={(e) => setAboutContent({
+                            ...aboutContent,
+                            satisfaction_rate: parseInt(e.target.value) || 0
+                          })}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="professional_goal">Objetivo Profissional</Label>
+                      <Textarea
+                        id="professional_goal"
+                        value={aboutContent.professional_goal}
+                        onChange={(e) => setAboutContent({
+                          ...aboutContent,
+                          professional_goal: e.target.value
+                        })}
+                        rows={3}
+                      />
+                    </div>
+                    
+                    <Button onClick={saveAboutContent} className="w-full">
+                      <Save className="h-4 w-4 mr-2" />
+                      Salvar Sobre
+                    </Button>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Projects */}
+          <TabsContent value="projects" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Adicionar Novo Projeto</CardTitle>
+                <CardDescription>
+                  Adicione um novo projeto ao seu portfólio
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="personal-name">Nome Completo</Label>
+                    <Label htmlFor="project_name">Nome do Projeto *</Label>
                     <Input
-                      id="personal-name"
-                      value={personalInfo.name}
-                      onChange={(e) => setPersonalInfo({...personalInfo, name: e.target.value})}
-                      placeholder="Seu nome completo"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="personal-title">Título/Cargo</Label>
-                    <Input
-                      id="personal-title"
-                      value={personalInfo.title}
-                      onChange={(e) => setPersonalInfo({...personalInfo, title: e.target.value})}
-                      placeholder="Ex: Desenvolvedor Full Stack"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <Label htmlFor="personal-description">Descrição</Label>
-                    <Textarea
-                      id="personal-description"
-                      value={personalInfo.description}
-                      onChange={(e) => setPersonalInfo({...personalInfo, description: e.target.value})}
-                      placeholder="Breve descrição sobre você"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="personal-email">E-mail</Label>
-                    <Input
-                      id="personal-email"
-                      type="email"
-                      value={personalInfo.email}
-                      onChange={(e) => setPersonalInfo({...personalInfo, email: e.target.value})}
-                      placeholder="seu.email@exemplo.com"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="personal-phone">Telefone</Label>
-                    <Input
-                      id="personal-phone"
-                      value={personalInfo.phone}
-                      onChange={(e) => setPersonalInfo({...personalInfo, phone: e.target.value})}
-                      placeholder="(11) 99999-9999"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="personal-location">Localização</Label>
-                    <Input
-                      id="personal-location"
-                      value={personalInfo.location}
-                      onChange={(e) => setPersonalInfo({...personalInfo, location: e.target.value})}
-                      placeholder="Cidade, Estado"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="personal-github">GitHub</Label>
-                    <Input
-                      id="personal-github"
-                      value={personalInfo.github}
-                      onChange={(e) => setPersonalInfo({...personalInfo, github: e.target.value})}
-                      placeholder="https://github.com/usuario"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="personal-linkedin">LinkedIn</Label>
-                    <Input
-                      id="personal-linkedin"
-                      value={personalInfo.linkedin}
-                      onChange={(e) => setPersonalInfo({...personalInfo, linkedin: e.target.value})}
-                      placeholder="https://linkedin.com/in/usuario"
-                    />
-                  </div>
-                </div>
-
-                <Button onClick={savePersonalInfo} className="w-full mt-4">
-                  <Save className="h-4 w-4 mr-2" />
-                  Salvar Informações Pessoais
-                </Button>
-              </Card>
-            </div>
-          )}
-          {/* Projects Tab */}
-          {activeTab === 'projects' && (
-            <div className="space-y-6">
-              <div className="syntax-highlight">
-                <h3 className="text-lg font-semibold mb-4">
-                  <span className="syntax-green">// Gerenciar Projetos</span>
-                </h3>
-              </div>
-
-              {/* Add New Project */}
-              <Card className="p-4 border-vs-blue/30">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="project-name">Nome do Projeto</Label>
-                    <Input
-                      id="project-name"
+                      id="project_name"
                       value={newProject.name}
-                      onChange={(e) => setNewProject({...newProject, name: e.target.value})}
-                      placeholder="Nome do projeto"
+                      onChange={(e) => setNewProject({
+                        ...newProject,
+                        name: e.target.value
+                      })}
                     />
                   </div>
-                  
                   <div>
-                    <Label htmlFor="project-github">URL do GitHub</Label>
+                    <Label htmlFor="project_github">URL do GitHub *</Label>
                     <Input
-                      id="project-github"
-                      value={newProject.githubUrl}
-                      onChange={(e) => setNewProject({...newProject, githubUrl: e.target.value})}
-                      placeholder="https://github.com/usuario/projeto"
+                      id="project_github"
+                      value={newProject.github_url}
+                      onChange={(e) => setNewProject({
+                        ...newProject,
+                        github_url: e.target.value
+                      })}
                     />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <Label htmlFor="project-description">Descrição</Label>
-                    <Textarea
-                      id="project-description"
-                      value={newProject.description}
-                      onChange={(e) => setNewProject({...newProject, description: e.target.value})}
-                      placeholder="Descrição do projeto"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="project-live">URL Demo (opcional)</Label>
-                    <Input
-                      id="project-live"
-                      value={newProject.liveUrl}
-                      onChange={(e) => setNewProject({...newProject, liveUrl: e.target.value})}
-                      placeholder="https://projeto-demo.com"
-                    />
-                  </div>
-
-                  <div className="flex space-x-2">
-                    <div className="flex-1">
-                      <Label htmlFor="project-stars">Stars</Label>
-                      <Input
-                        id="project-stars"
-                        type="number"
-                        value={newProject.stars}
-                        onChange={(e) => setNewProject({...newProject, stars: Number(e.target.value)})}
-                        placeholder="0"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <Label htmlFor="project-forks">Forks</Label>
-                      <Input
-                        id="project-forks"
-                        type="number"
-                        value={newProject.forks}
-                        onChange={(e) => setNewProject({...newProject, forks: Number(e.target.value)})}
-                        placeholder="0"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <Label>Tecnologias</Label>
-                    <div className="space-y-2">
-                      {newProject.technologies.map((tech, index) => (
-                        <div key={index} className="flex space-x-2">
-                          <Input
-                            value={tech}
-                            onChange={(e) => updateProjectTechnology(index, e.target.value)}
-                            placeholder="Nome da tecnologia"
-                            className="flex-1"
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              const updatedTechnologies = newProject.technologies.filter((_, i) => i !== index);
-                              setNewProject({...newProject, technologies: updatedTechnologies});
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      <Button
-                        variant="outline"
-                        onClick={addTechnologyToProject}
-                        className="w-full"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Adicionar Tecnologia
-                      </Button>
-                    </div>
                   </div>
                 </div>
-
-                <Button onClick={addProject} className="w-full mt-4">
+                
+                <div>
+                  <Label htmlFor="project_description">Descrição *</Label>
+                  <Textarea
+                    id="project_description"
+                    value={newProject.description}
+                    onChange={(e) => setNewProject({
+                      ...newProject,
+                      description: e.target.value
+                    })}
+                    rows={3}
+                  />
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="project_live">URL Demo</Label>
+                    <Input
+                      id="project_live"
+                      value={newProject.live_url}
+                      onChange={(e) => setNewProject({
+                        ...newProject,
+                        live_url: e.target.value
+                      })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="project_stars">Stars</Label>
+                    <Input
+                      id="project_stars"
+                      type="number"
+                      value={newProject.stars}
+                      onChange={(e) => setNewProject({
+                        ...newProject,
+                        stars: parseInt(e.target.value) || 0
+                      })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="project_forks">Forks</Label>
+                    <Input
+                      id="project_forks"
+                      type="number"
+                      value={newProject.forks}
+                      onChange={(e) => setNewProject({
+                        ...newProject,
+                        forks: parseInt(e.target.value) || 0
+                      })}
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="project_technologies">Tecnologias (separadas por vírgula)</Label>
+                  <Input
+                    id="project_technologies"
+                    value={arrayToString(newProject.technologies)}
+                    onChange={(e) => setNewProject({
+                      ...newProject,
+                      technologies: stringToArray(e.target.value)
+                    })}
+                    placeholder="React, TypeScript, Node.js"
+                  />
+                </div>
+                
+                <Button onClick={addProject} className="w-full">
                   <Plus className="h-4 w-4 mr-2" />
                   Adicionar Projeto
                 </Button>
-              </Card>
+              </CardContent>
+            </Card>
 
-              {/* Projects List */}
-              <div className="space-y-4">
-                {projects.map((project) => (
-                  <Card key={project.id} className="p-4">
-                    {editingProject === project.id ? (
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label>Nome do Projeto</Label>
-                            <Input
-                              value={editProjectData.name}
-                              onChange={(e) => setEditProjectData({...editProjectData, name: e.target.value})}
-                            />
-                          </div>
-                          <div>
-                            <Label>GitHub URL</Label>
-                            <Input
-                              value={editProjectData.githubUrl}
-                              onChange={(e) => setEditProjectData({...editProjectData, githubUrl: e.target.value})}
-                            />
-                          </div>
-                          <div className="col-span-2">
-                            <Label>Descrição</Label>
-                            <Textarea
-                              value={editProjectData.description}
-                              onChange={(e) => setEditProjectData({...editProjectData, description: e.target.value})}
-                              rows={3}
-                            />
-                          </div>
-                          <div>
-                            <Label>URL Demo</Label>
-                            <Input
-                              value={editProjectData.liveUrl}
-                              onChange={(e) => setEditProjectData({...editProjectData, liveUrl: e.target.value})}
-                            />
-                          </div>
-                          <div className="flex space-x-2">
-                            <div className="flex-1">
-                              <Label>Stars</Label>
-                              <Input
-                                type="number"
-                                value={editProjectData.stars}
-                                onChange={(e) => setEditProjectData({...editProjectData, stars: Number(e.target.value)})}
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <Label>Forks</Label>
-                              <Input
-                                type="number"
-                                value={editProjectData.forks}
-                                onChange={(e) => setEditProjectData({...editProjectData, forks: Number(e.target.value)})}
-                              />
-                            </div>
-                          </div>
-                          <div className="col-span-2">
-                            <Label>Tecnologias</Label>
-                            <div className="space-y-2">
-                              {editProjectData.technologies.map((tech, index) => (
-                                <div key={index} className="flex space-x-2">
-                                  <Input
-                                    value={tech}
-                                    onChange={(e) => {
-                                      const updatedTechs = [...editProjectData.technologies];
-                                      updatedTechs[index] = e.target.value;
-                                      setEditProjectData({...editProjectData, technologies: updatedTechs});
-                                    }}
-                                    className="flex-1"
-                                  />
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                      const updatedTechs = editProjectData.technologies.filter((_, i) => i !== index);
-                                      setEditProjectData({...editProjectData, technologies: updatedTechs});
-                                    }}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              ))}
-                              <Button
-                                variant="outline"
-                                onClick={() => setEditProjectData({
-                                  ...editProjectData,
-                                  technologies: [...editProjectData.technologies, '']
-                                })}
-                                className="w-full"
-                              >
-                                <Plus className="h-4 w-4 mr-2" />
-                                Adicionar Tecnologia
-                              </Button>
-                            </div>
-                          </div>
+            {/* Lista de Projetos */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Projetos Existentes</h3>
+              {projects.map((project) => (
+                <Card key={project.id}>
+                  <CardContent className="pt-6">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h4 className="font-semibold">{project.name}</h4>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {project.description}
+                        </p>
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {project.technologies.map((tech, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {tech}
+                            </Badge>
+                          ))}
                         </div>
-                        <div className="flex space-x-2">
-                          <Button onClick={saveProjectEdit} size="sm">
-                            <Save className="h-4 w-4 mr-2" />
-                            Salvar
-                          </Button>
-                          <Button onClick={cancelProjectEdit} variant="outline" size="sm">
-                            Cancelar
-                          </Button>
+                        <div className="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
+                          <span>⭐ {project.stars}</span>
+                          <span>🍴 {project.forks}</span>
                         </div>
                       </div>
-                    ) : (
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-vs-yellow">{project.name}</h4>
-                          <p className="text-sm text-muted-foreground mt-1">{project.description}</p>
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {project.technologies.map((tech: string) => (
-                              <span
-                                key={tech}
-                                className="px-2 py-1 text-xs rounded bg-vs-blue/10 text-vs-blue"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                          <div className="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
-                            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="hover:text-vs-blue">
-                              GitHub
-                            </a>
-                            {project.liveUrl && (
-                              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="hover:text-vs-green">
-                                Demo
-                              </a>
-                            )}
-                            <span>⭐ {project.stars}</span>
-                            <span>🍴 {project.forks}</span>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => startEditingProject(project)}
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => deleteProject(project.id)}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </Card>
-                ))}
-              </div>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => deleteProject(project.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          )}
+          </TabsContent>
+
+          {/* Social Links */}
+          <TabsContent value="social" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Adicionar Novo Link Social</CardTitle>
+                <CardDescription>
+                  Adicione um novo link para suas redes sociais
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="social_platform">Plataforma *</Label>
+                    <Input
+                      id="social_platform"
+                      value={newSocialLink.platform}
+                      onChange={(e) => setNewSocialLink({
+                        ...newSocialLink,
+                        platform: e.target.value
+                      })}
+                      placeholder="GitHub, LinkedIn, etc."
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="social_url">URL *</Label>
+                    <Input
+                      id="social_url"
+                      value={newSocialLink.url}
+                      onChange={(e) => setNewSocialLink({
+                        ...newSocialLink,
+                        url: e.target.value
+                      })}
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="social_icon">Ícone (Lucide)</Label>
+                    <Input
+                      id="social_icon"
+                      value={newSocialLink.icon}
+                      onChange={(e) => setNewSocialLink({
+                        ...newSocialLink,
+                        icon: e.target.value
+                      })}
+                      placeholder="Github, Linkedin, Mail"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="social_color">Cor CSS</Label>
+                    <Input
+                      id="social_color"
+                      value={newSocialLink.color}
+                      onChange={(e) => setNewSocialLink({
+                        ...newSocialLink,
+                        color: e.target.value
+                      })}
+                      placeholder="text-vs-blue"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="social_order">Ordem</Label>
+                    <Input
+                      id="social_order"
+                      type="number"
+                      value={newSocialLink.display_order}
+                      onChange={(e) => setNewSocialLink({
+                        ...newSocialLink,
+                        display_order: parseInt(e.target.value) || 0
+                      })}
+                    />
+                  </div>
+                </div>
+                
+                <Button onClick={addSocialLink} className="w-full">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar Link Social
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Lista de Links Sociais */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Links Sociais Existentes</h3>
+              {socialLinks.map((link) => (
+                <Card key={link.id}>
+                  <CardContent className="pt-6">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h4 className="font-semibold">{link.platform}</h4>
+                        <p className="text-sm text-muted-foreground">{link.url}</p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <Badge variant="outline">{link.icon}</Badge>
+                          <Badge variant="outline">{link.color}</Badge>
+                        </div>
+                      </div>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => deleteSocialLink(link.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
 
           {/* Skills Tab */}
-          {activeTab === 'skills' && (
-            <div className="space-y-6">
-              <div className="syntax-highlight">
-                <h3 className="text-lg font-semibold mb-4">
-                  <span className="syntax-green">// Gerenciar Skills</span>
-                </h3>
-              </div>
-
-              {/* Add New Skill */}
-              <Card className="p-4 border-vs-blue/30">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="skill-name">Nome da Skill</Label>
-                    <Input
-                      id="skill-name"
-                      value={newSkill.name}
-                      onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
-                      placeholder="Nome da skill"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="skill-percentage">Porcentagem</Label>
-                    <Input
-                      id="skill-percentage"
-                      type="number"
-                      value={newSkill.percentage}
-                      onChange={(e) =>
-                        setNewSkill({ ...newSkill, percentage: Number(e.target.value) })
-                      }
-                      placeholder="0-100"
-                      min="0"
-                      max="100"
-                    />
-                  </div>
-                </div>
-                <Button onClick={addSkill} className="w-full mt-4">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Adicionar Skill
-                </Button>
+          <TabsContent value="skills" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Soft Skills */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Soft Skills</CardTitle>
+                  <CardDescription>Habilidades interpessoais</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {softSkills.map((skill) => (
+                    <div key={skill.id} className="flex justify-between items-center p-3 border rounded">
+                      <div>
+                        <h4 className="font-medium">{skill.title}</h4>
+                        <p className="text-sm text-muted-foreground">{skill.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
               </Card>
 
-              {/* Skills List */}
-              <div className="space-y-4">
-                {skills.map((skill) => (
-                  <Card key={skill.id} className="p-4">
-                    {editingSkill === skill.id ? (
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label>Nome da Skill</Label>
-                            <Input
-                              value={editSkillData.name}
-                              onChange={(e) => setEditSkillData({...editSkillData, name: e.target.value})}
-                            />
-                          </div>
-                          <div>
-                            <Label>Porcentagem</Label>
-                            <Input
-                              type="number"
-                              min="0"
-                              max="100"
-                              value={editSkillData.percentage}
-                              onChange={(e) => setEditSkillData({...editSkillData, percentage: Number(e.target.value)})}
-                            />
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button onClick={saveSkillEdit} size="sm">
-                            <Save className="h-4 w-4 mr-2" />
-                            Salvar
-                          </Button>
-                          <Button onClick={cancelSkillEdit} variant="outline" size="sm">
-                            Cancelar
-                          </Button>
-                        </div>
+              {/* Tech Focus */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Foco Técnico</CardTitle>
+                  <CardDescription>Áreas de especialização técnica</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {techFocus.map((focus) => (
+                    <div key={focus.id} className="p-3 border rounded">
+                      <h4 className="font-medium">{focus.title}</h4>
+                      <p className="text-sm text-muted-foreground">{focus.description}</p>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {focus.technologies.map((tech, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {tech}
+                          </Badge>
+                        ))}
                       </div>
-                    ) : (
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-semibold text-vs-yellow">{skill.name}</h4>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {skill.percentage}% de proficiência
-                          </p>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => startEditingSkill(skill)}
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => deleteSkill(skill.id)}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </Card>
-                ))}
-              </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
             </div>
-          )}
+          </TabsContent>
 
           {/* Experience Tab */}
-          {activeTab === 'experience' && (
-            <div className="space-y-6">
-              <div className="syntax-highlight">
-                <h3 className="text-lg font-semibold mb-4">
-                  <span className="syntax-green">// Gerenciar Experiências</span>
-                </h3>
-              </div>
-
-              {/* Add New Experience */}
-              <Card className="p-4 border-vs-blue/30">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="experience-title">Título</Label>
-                    <Input
-                      id="experience-title"
-                      value={newExperience.title}
-                      onChange={(e) => setNewExperience({ ...newExperience, title: e.target.value })}
-                      placeholder="Título da experiência"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="experience-company">Empresa</Label>
-                    <Input
-                      id="experience-company"
-                      value={newExperience.company}
-                      onChange={(e) =>
-                        setNewExperience({ ...newExperience, company: e.target.value })
-                      }
-                      placeholder="Nome da empresa"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="experience-start-date">Data de Início</Label>
-                    <Input
-                      id="experience-start-date"
-                      type="date"
-                      value={newExperience.startDate}
-                      onChange={(e) =>
-                        setNewExperience({ ...newExperience, startDate: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="experience-end-date">Data de Término</Label>
-                    <Input
-                      id="experience-end-date"
-                      type="date"
-                      value={newExperience.endDate}
-                      onChange={(e) =>
-                        setNewExperience({ ...newExperience, endDate: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="md:col-span-2">
-                    <Label htmlFor="experience-description">Descrição</Label>
-                    <Textarea
-                      id="experience-description"
-                      value={newExperience.description}
-                      onChange={(e) =>
-                        setNewExperience({ ...newExperience, description: e.target.value })
-                      }
-                      placeholder="Descrição da experiência"
-                      rows={3}
-                    />
-                  </div>
-                </div>
-                <Button onClick={addExperience} className="w-full mt-4">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Adicionar Experiência
-                </Button>
-              </Card>
-
-              {/* Experiences List */}
-              <div className="space-y-4">
-                {experiences.map((experience) => (
-                  <Card key={experience.id} className="p-4">
-                    {editingExperience === experience.id ? (
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label>Título</Label>
-                            <Input
-                              value={editExperienceData.title}
-                              onChange={(e) => setEditExperienceData({...editExperienceData, title: e.target.value})}
-                            />
-                          </div>
-                          <div>
-                            <Label>Empresa</Label>
-                            <Input
-                              value={editExperienceData.company}
-                              onChange={(e) => setEditExperienceData({...editExperienceData, company: e.target.value})}
-                            />
-                          </div>
-                          <div>
-                            <Label>Data Início</Label>
-                            <Input
-                              type="date"
-                              value={editExperienceData.startDate}
-                              onChange={(e) => setEditExperienceData({...editExperienceData, startDate: e.target.value})}
-                            />
-                          </div>
-                          <div>
-                            <Label>Data Fim</Label>
-                            <Input
-                              type="date"
-                              value={editExperienceData.endDate}
-                              onChange={(e) => setEditExperienceData({...editExperienceData, endDate: e.target.value})}
-                            />
-                          </div>
-                          <div className="col-span-2">
-                            <Label>Descrição</Label>
-                            <Textarea
-                              value={editExperienceData.description}
-                              onChange={(e) => setEditExperienceData({...editExperienceData, description: e.target.value})}
-                              rows={3}
-                            />
-                          </div>
+          <TabsContent value="experience" className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Experiências Profissionais</h3>
+              {experiences.map((exp) => (
+                <Card key={exp.id}>
+                  <CardContent className="pt-6">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h4 className="font-semibold">{exp.title}</h4>
+                        <p className="text-sm text-muted-foreground">{exp.company} - {exp.location}</p>
+                        <p className="text-sm text-muted-foreground">{exp.period}</p>
+                        <p className="text-sm mt-2">{exp.description}</p>
+                        
+                        <div className="mt-3">
+                          <h5 className="font-medium text-sm">Principais Realizações:</h5>
+                          <ul className="text-sm text-muted-foreground list-disc list-inside mt-1">
+                            {exp.achievements.map((achievement, index) => (
+                              <li key={index}>{achievement}</li>
+                            ))}
+                          </ul>
                         </div>
-                        <div className="flex space-x-2">
-                          <Button onClick={saveExperienceEdit} size="sm">
-                            <Save className="h-4 w-4 mr-2" />
-                            Salvar
-                          </Button>
-                          <Button onClick={cancelExperienceEdit} variant="outline" size="sm">
-                            Cancelar
-                          </Button>
+                        
+                        <div className="flex flex-wrap gap-1 mt-3">
+                          {exp.technologies.map((tech, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {tech}
+                            </Badge>
+                          ))}
                         </div>
                       </div>
-                    ) : (
-                      <div className="flex flex-col">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-semibold text-vs-yellow">{experience.title}</h4>
-                            <p className="text-sm text-muted-foreground mt-1">{experience.company}</p>
-                          </div>
-                          <div className="flex space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => startEditingExperience(experience)}
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => deleteExperience(experience.id)}
-                              className="text-destructive hover:text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                        <div className="text-sm text-muted-foreground mt-1">
-                          {experience.startDate} - {experience.endDate}
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-2">{experience.description}</p>
-                      </div>
-                    )}
-                  </Card>
-                ))}
-              </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          )}
-
-          {/* Education Tab */}
-          {activeTab === 'education' && (
-            <div className="space-y-6">
-              <div className="syntax-highlight">
-                <h3 className="text-lg font-semibold mb-4">
-                  <span className="syntax-green">// Gerenciar Formação Acadêmica</span>
-                </h3>
-              </div>
-
-              {/* Add New Education */}
-              <Card className="p-4 border-vs-blue/30">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="education-institution">Instituição</Label>
-                    <Input
-                      id="education-institution"
-                      value={newEducation.institution}
-                      onChange={(e) =>
-                        setNewEducation({ ...newEducation, institution: e.target.value })
-                      }
-                      placeholder="Nome da instituição"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="education-degree">Grau Acadêmico</Label>
-                    <Input
-                      id="education-degree"
-                      value={newEducation.degree}
-                      onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
-                      placeholder="Grau acadêmico"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="education-start-date">Data de Início</Label>
-                    <Input
-                      id="education-start-date"
-                      type="date"
-                      value={newEducation.startDate}
-                      onChange={(e) =>
-                        setNewEducation({ ...newEducation, startDate: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="education-end-date">Data de Término</Label>
-                    <Input
-                      id="education-end-date"
-                      type="date"
-                      value={newEducation.endDate}
-                      onChange={(e) =>
-                        setNewEducation({ ...newEducation, endDate: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="md:col-span-2">
-                    <Label htmlFor="education-description">Descrição</Label>
-                    <Textarea
-                      id="education-description"
-                      value={newEducation.description}
-                      onChange={(e) =>
-                        setNewEducation({ ...newEducation, description: e.target.value })
-                      }
-                      placeholder="Descrição da formação acadêmica"
-                      rows={3}
-                    />
-                  </div>
-                </div>
-                <Button onClick={addEducation} className="w-full mt-4">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Adicionar Formação
-                </Button>
-              </Card>
-
-              {/* Education List */}
-              <div className="space-y-4">
-                {education.map((educationItem) => (
-                  <Card key={educationItem.id} className="p-4">
-                    {editingEducation === educationItem.id ? (
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label>Instituição</Label>
-                            <Input
-                              value={editEducationData.institution}
-                              onChange={(e) => setEditEducationData({...editEducationData, institution: e.target.value})}
-                            />
-                          </div>
-                          <div>
-                            <Label>Grau</Label>
-                            <Input
-                              value={editEducationData.degree}
-                              onChange={(e) => setEditEducationData({...editEducationData, degree: e.target.value})}
-                            />
-                          </div>
-                          <div>
-                            <Label>Data Início</Label>
-                            <Input
-                              type="date"
-                              value={editEducationData.startDate}
-                              onChange={(e) => setEditEducationData({...editEducationData, startDate: e.target.value})}
-                            />
-                          </div>
-                          <div>
-                            <Label>Data Fim</Label>
-                            <Input
-                              type="date"
-                              value={editEducationData.endDate}
-                              onChange={(e) => setEditEducationData({...editEducationData, endDate: e.target.value})}
-                            />
-                          </div>
-                          <div className="col-span-2">
-                            <Label>Descrição</Label>
-                            <Textarea
-                              value={editEducationData.description}
-                              onChange={(e) => setEditEducationData({...editEducationData, description: e.target.value})}
-                              rows={3}
-                            />
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button onClick={saveEducationEdit} size="sm">
-                            <Save className="h-4 w-4 mr-2" />
-                            Salvar
-                          </Button>
-                          <Button onClick={cancelEducationEdit} variant="outline" size="sm">
-                            Cancelar
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-semibold text-vs-yellow">{educationItem.degree}</h4>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {educationItem.institution}
-                            </p>
-                          </div>
-                          <div className="flex space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => startEditingEducation(educationItem)}
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => deleteEducation(educationItem.id)}
-                              className="text-destructive hover:text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                        <div className="text-sm text-muted-foreground mt-1">
-                          {educationItem.startDate} - {educationItem.endDate}
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-2">
-                          {educationItem.description}
-                        </p>
-                      </div>
-                    )}
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="p-6 border-t border-border bg-card/50">
-          <div className="syntax-highlight text-center">
-            <span className="syntax-purple">{'}'}</span>
-          </div>
-        </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

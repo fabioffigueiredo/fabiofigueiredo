@@ -2,35 +2,70 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Github, Linkedin, Mail, MessageCircle } from 'lucide-react';
-import profilePhoto from '@/assets/profile-photo.jpeg';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import * as icons from 'lucide-react';
+
+interface HeroContent {
+  id: string;
+  name: string;
+  role: string;
+  focus: string;
+  experience_years: number;
+  description: string;
+  profile_image_url: string | null;
+}
+
+interface SocialLink {
+  id: string;
+  platform: string;
+  url: string;
+  icon: string;
+  color: string;
+  display_order: number;
+  is_active: boolean;
+}
 
 const HeroSection = () => {
-  const socialLinks = [
-    {
-      icon: Github,
-      label: 'GitHub',
-      href: 'https://github.com/fabioffigueiredo',
-      color: 'text-vs-blue'
-    },
-    {
-      icon: Linkedin,
-      label: 'LinkedIn',
-      href: 'https://linkedin.com/in/fabio-figueiredo-295a8191',
-      color: 'text-vs-cyan'
-    },
-    {
-      icon: Mail,
-      label: 'Email',
-      href: 'mailto:fabioinformacao@gmail.com',
-      color: 'text-vs-green'
-    },
-    {
-      icon: MessageCircle,
-      label: 'WhatsApp',
-      href: 'https://wa.me/5521964641561',
-      color: 'text-vs-yellow'
+  const [heroContent, setHeroContent] = useState<HeroContent | null>(null);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+
+  useEffect(() => {
+    loadHeroContent();
+    loadSocialLinks();
+  }, []);
+
+  const loadHeroContent = async () => {
+    const { data, error } = await supabase
+      .from('hero_content')
+      .select('*')
+      .limit(1)
+      .single();
+    
+    if (!error && data) {
+      setHeroContent(data);
     }
-  ];
+  };
+
+  const loadSocialLinks = async () => {
+    const { data, error } = await supabase
+      .from('social_links')
+      .select('*')
+      .eq('is_active', true)
+      .order('display_order');
+    
+    if (!error && data) {
+      setSocialLinks(data);
+    }
+  };
+
+  if (!heroContent) {
+    return (
+      <section className="min-h-screen flex items-center justify-center pt-20 pb-10">
+        <div className="text-center">Carregando...</div>
+      </section>
+    );
+  }
 
   return (
     <section className="min-h-screen flex items-center justify-center pt-20 pb-10">
@@ -51,8 +86,8 @@ const HeroSection = () => {
                 className="w-40 h-40 mx-auto lg:mx-0 rounded-full bg-gradient-to-r from-vs-blue to-vs-purple p-1"
               >
                 <img 
-                  src={profilePhoto} 
-                  alt="Fabio Figueiredo" 
+                  src={heroContent.profile_image_url || '/placeholder.svg'} 
+                  alt={heroContent.name} 
                   className="w-full h-full rounded-full object-cover"
                 />
               </motion.div>
@@ -66,7 +101,7 @@ const HeroSection = () => {
                 className="text-4xl md:text-5xl font-bold syntax-highlight"
               >
                 <span className="syntax-blue">class</span>{' '}
-                <span className="syntax-yellow">FabioFigueiredo</span>{' '}
+                <span className="syntax-yellow">{heroContent.name.replace(' ', '')}</span>{' '}
                 <span className="syntax-purple">{'{'}</span>
               </motion.h1>
               
@@ -86,7 +121,7 @@ const HeroSection = () => {
                   <span className="syntax-purple">.</span>
                   <span className="syntax-yellow">role</span>{' '}
                   <span className="syntax-purple">=</span>{' '}
-                  <span className="syntax-green">"Programador Python Júnior"</span>
+                  <span className="syntax-green">"{heroContent.role}"</span>
                   <span className="syntax-purple">;</span>
                 </p>
                 <p className="text-lg ml-4">
@@ -94,7 +129,7 @@ const HeroSection = () => {
                   <span className="syntax-purple">.</span>
                   <span className="syntax-yellow">focus</span>{' '}
                   <span className="syntax-purple">=</span>{' '}
-                  <span className="syntax-green">"Data Science & AI"</span>
+                  <span className="syntax-green">"{heroContent.focus}"</span>
                   <span className="syntax-purple">;</span>
                 </p>
                 <p className="text-lg ml-4">
@@ -102,7 +137,7 @@ const HeroSection = () => {
                   <span className="syntax-purple">.</span>
                   <span className="syntax-yellow">experience</span>{' '}
                   <span className="syntax-purple">=</span>{' '}
-                  <span className="syntax-orange">9</span>
+                  <span className="syntax-orange">{heroContent.experience_years}</span>
                   <span className="syntax-purple">;</span>{' '}
                   <span className="syntax-gray">// anos em TI</span>
                 </p>
@@ -120,10 +155,7 @@ const HeroSection = () => {
                 transition={{ delay: 0.6, duration: 0.8 }}
                 className="text-lg text-muted-foreground max-w-2xl"
               >
-                Profissional em transição estratégica para <span className="text-vs-blue font-semibold">Programação Python</span>, 
-                <span className="text-vs-green font-semibold"> Inteligência Artificial</span> e 
-                <span className="text-vs-purple font-semibold"> Análise de Dados</span>. 
-                Pós-graduando em IA, ML e Deep Learning na Infnet.
+                {heroContent.description}
               </motion.p>
             </div>
 
@@ -135,19 +167,21 @@ const HeroSection = () => {
               className="flex justify-center lg:justify-start space-x-4"
             >
               {socialLinks.map((social, index) => {
-                const Icon = social.icon;
+                const IconComponent = (icons as any)[social.icon];
+                if (!IconComponent) return null;
+                
                 return (
                   <motion.a
-                    key={social.label}
-                    href={social.href}
+                    key={social.id}
+                    href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.1, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                     className={`p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors ${social.color} hover:shadow-lg`}
-                    title={social.label}
+                    title={social.platform}
                   >
-                    <Icon className="h-6 w-6" />
+                    <IconComponent className="h-6 w-6" />
                   </motion.a>
                 );
               })}
