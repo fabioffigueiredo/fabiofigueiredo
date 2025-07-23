@@ -145,7 +145,10 @@ const PortfolioMain = () => {
       </footer>
 
       {/* Admin Panel */}
-      {isAdminMode && <AdminPanel />}
+      <AdminPanel 
+        isOpen={isAdminMode}
+        onClose={() => setIsAdminMode(false)}
+      />
 
       {/* Scroll to Top Button */}
       <motion.button
