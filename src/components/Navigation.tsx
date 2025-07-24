@@ -22,6 +22,7 @@ const Navigation = ({ activeSection, onSectionChange, isAdmin, onToggleAdmin }: 
     { id: 'experience', label: 'experience()', icon: Briefcase },
     { id: 'education', label: 'education()', icon: Award },
     { id: 'dashboard', label: 'analytics()', icon: BarChart3 },
+    { id: 'admin', label: 'admin.enter()', icon: Settings },
   ];
 
   const handleSectionChange = (section: string) => {

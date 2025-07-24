@@ -17,6 +17,11 @@ const PortfolioMain = () => {
 
   // Smooth scroll to section
   const scrollToSection = (sectionId: string) => {
+    if (sectionId === 'admin') {
+      setIsAdminMode(true);
+      return;
+    }
+    
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ 
