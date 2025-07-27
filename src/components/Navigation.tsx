@@ -56,13 +56,15 @@ const Navigation = ({ activeSection, onSectionChange, isAdmin, onToggleAdmin }: 
                   size="sm"
                   onClick={() => onSectionChange(item.id)}
                   className={`syntax-highlight ${
-                    activeSection === item.id 
-                      ? 'bg-vs-blue/20 text-vs-blue border border-vs-blue/30' 
-                      : 'hover:bg-secondary/80'
+                    item.id === 'admin'
+                      ? 'text-red-500 hover:bg-red-500/10 hover:text-red-400'
+                      : activeSection === item.id 
+                        ? 'bg-vs-blue/20 text-vs-blue border border-vs-blue/30' 
+                        : 'hover:bg-secondary/80'
                   }`}
                 >
-                  <Icon className="h-4 w-4 mr-2" />
-                  <span className="syntax-purple">{item.label}</span>
+                  <Icon className={`h-4 w-4 mr-2 ${item.id === 'admin' ? 'text-red-500' : ''}`} />
+                  <span className={item.id === 'admin' ? 'text-red-500' : 'syntax-purple'}>{item.label}</span>
                 </Button>
               );
             })}
@@ -96,13 +98,15 @@ const Navigation = ({ activeSection, onSectionChange, isAdmin, onToggleAdmin }: 
                         size="sm"
                         onClick={() => handleSectionChange(item.id)}
                         className={`w-full justify-start syntax-highlight ${
-                          activeSection === item.id 
-                            ? 'bg-vs-blue/20 text-vs-blue border border-vs-blue/30' 
-                            : 'hover:bg-secondary/80'
+                          item.id === 'admin'
+                            ? 'text-red-500 hover:bg-red-500/10 hover:text-red-400'
+                            : activeSection === item.id 
+                              ? 'bg-vs-blue/20 text-vs-blue border border-vs-blue/30' 
+                              : 'hover:bg-secondary/80'
                         }`}
                       >
-                        <Icon className="h-4 w-4 mr-3" />
-                        <span className="syntax-purple">{item.label}</span>
+                        <Icon className={`h-4 w-4 mr-3 ${item.id === 'admin' ? 'text-red-500' : ''}`} />
+                        <span className={item.id === 'admin' ? 'text-red-500' : 'syntax-purple'}>{item.label}</span>
                       </Button>
                     );
                   })}
