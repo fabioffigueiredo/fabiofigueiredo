@@ -46,7 +46,7 @@ const Navigation = ({ activeSection, onSectionChange, isAdmin, onToggleAdmin }: 
           </div>
 
           {/* Navigation Menu */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -65,6 +65,31 @@ const Navigation = ({ activeSection, onSectionChange, isAdmin, onToggleAdmin }: 
                 >
                   <Icon className={`h-4 w-4 mr-2 ${item.id === 'admin' ? 'text-red-400' : ''}`} />
                   <span className={item.id === 'admin' ? 'text-red-400' : 'syntax-purple'}>{item.label}</span>
+                </Button>
+              );
+            })}
+          </div>
+
+          {/* Medium Screen Navigation - Icons Only */}
+          <div className="hidden md:flex lg:hidden items-center space-x-1">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Button
+                  key={item.id}
+                  variant={activeSection === item.id ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => onSectionChange(item.id)}
+                  className={`syntax-highlight h-10 w-10 p-0 ${
+                    item.id === 'admin'
+                      ? 'text-red-400 hover:bg-red-400/10 hover:text-red-300'
+                      : activeSection === item.id 
+                        ? 'bg-vs-blue/20 text-vs-blue border border-vs-blue/30' 
+                        : 'hover:bg-secondary/80'
+                  }`}
+                  title={item.label}
+                >
+                  <Icon className={`h-4 w-4 ${item.id === 'admin' ? 'text-red-400' : ''}`} />
                 </Button>
               );
             })}
