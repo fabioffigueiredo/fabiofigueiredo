@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Github, Linkedin, Mail, MessageCircle } from 'lucide-react';
+import { Github, Linkedin, Mail, MessageCircle, Download } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import * as icons from 'lucide-react';
@@ -169,6 +169,31 @@ const HeroSection = () => {
               >
                 {heroContent.description}
               </motion.p>
+
+              {/* Download CV Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 0.8 }}
+                className="pt-4"
+              >
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="syntax-highlight border-vs-blue text-vs-blue hover:bg-vs-blue/10 hover:text-vs-blue"
+                >
+                  <a
+                    href="https://drive.google.com/uc?export=download&id=1HJ12i7RQeZMSPkI_T5HryMEIb0gM-N5p"
+                    download="Fabio_Figueiredo_CV.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Download className="h-5 w-5 mr-2" />
+                    <span className="syntax-green">download_cv()</span>
+                  </a>
+                </Button>
+              </motion.div>
             </div>
 
             {/* Social Links */}
