@@ -1,73 +1,70 @@
-# Welcome to your Lovable project
+# Fabio Figueiredo - Portfólio Pessoal
 
-## Project info
+Este é meu site portfólio pessoal, desenvolvido para apresentar minha trajetória profissional, habilidades técnicas e projetos na área de tecnologia.
 
-**URL**: https://lovable.dev/projects/18ec1ad1-295d-4a1d-9d34-3c792c14ca81
+## 🚀 Sobre o Projeto
 
-## How can I edit this code?
+Um portfólio interativo e responsivo que destaca minha experiência de 11 anos em infraestrutura de TI e minha transição estratégica para desenvolvimento Python, Inteligência Artificial e Análise de Dados.
 
-There are several ways of editing your application.
+## 🛠️ Tecnologias Utilizadas
 
-**Use Lovable**
+- **React** - Biblioteca JavaScript para construção da interface
+- **TypeScript** - Superset do JavaScript com tipagem estática
+- **Vite** - Build tool moderna e rápida
+- **Tailwind CSS** - Framework CSS utilitário
+- **Shadcn/ui** - Componentes de UI reutilizáveis
+- **Framer Motion** - Biblioteca para animações
+- **React Router** - Roteamento para aplicações React
+- **Supabase** - Backend como serviço
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/18ec1ad1-295d-4a1d-9d34-3c792c14ca81) and start prompting.
+## 📱 Funcionalidades
 
-Changes made via Lovable will be committed automatically to this repo.
+- Design responsivo e moderno
+- Seções interativas sobre experiência profissional
+- Dashboard de habilidades técnicas
+- Galeria de projetos
+- Informações educacionais e certificações
+- Integração com redes sociais
 
-**Use your preferred IDE**
+## 🌐 Deploy
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+O site está hospedado no GitHub Pages e pode ser acessado em:
+[https://fabioffigueiredo.github.io/fabiofigueiredo/](https://fabioffigueiredo.github.io/fabiofigueiredo/)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🚀 Como executar localmente
 
-Follow these steps:
+1. Clone o repositório:
+```bash
+git clone https://github.com/fabioffigueiredo/fabiofigueiredo.git
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. Instale as dependências:
+```bash
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Execute o projeto em modo de desenvolvimento:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. Para fazer o build de produção:
+```bash
+npm run build
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+5. Para fazer deploy no GitHub Pages:
+```bash
+npm run deploy
+```
 
-**Use GitHub Codespaces**
+## 📞 Contato
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **LinkedIn**: [Fabio Figueiredo](https://www.linkedin.com/in/fabio-ffigueiredo/)
+- **GitHub**: [fabioffigueiredo](https://github.com/fabioffigueiredo)
+- **Email**: fabioinformacao@gmail.com
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+*Desenvolvido com ❤️ por Fabio Figueiredo*
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/18ec1ad1-295d-4a1d-9d34-3c792c14ca81) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)

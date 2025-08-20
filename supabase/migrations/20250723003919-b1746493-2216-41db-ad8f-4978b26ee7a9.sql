@@ -188,7 +188,7 @@ INSERT INTO public.hero_content (name, role, focus, experience_years, descriptio
 -- Social Links
 INSERT INTO public.social_links (platform, url, icon, color, display_order) VALUES
 ('GitHub', 'https://github.com/fabioffigueiredo', 'Github', 'text-vs-blue', 1),
-('LinkedIn', 'https://linkedin.com/in/fabio-figueiredo-295a8191', 'Linkedin', 'text-vs-cyan', 2),
+('LinkedIn', 'https://www.linkedin.com/in/fabio-ffigueiredo/', 'Linkedin', 'text-vs-cyan', 2),
 ('Email', 'mailto:fabioinformacao@gmail.com', 'Mail', 'text-vs-green', 3),
 ('WhatsApp', 'https://wa.me/5521964641561', 'MessageCircle', 'text-vs-yellow', 4);
 

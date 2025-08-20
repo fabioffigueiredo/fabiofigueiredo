@@ -34,7 +34,10 @@ const AdminPanel = ({ isOpen, onClose }: AdminPanelProps) => {
   const [techFocus, setTechFocus] = useState<any[]>([]);
 
   const handleLogin = () => {
-    if (loginEmail === 'fabioinformacao@gmail.com' && loginPassword === 'F@bi1984') {
+    const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
+    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+    
+    if (loginEmail === adminEmail && loginPassword === adminPassword) {
       setIsAuthenticated(true);
       toast({
         title: 'Sucesso',

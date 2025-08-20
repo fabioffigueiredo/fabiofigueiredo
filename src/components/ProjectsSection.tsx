@@ -20,32 +20,34 @@ const ProjectsSection = () => {
   const [projects, setProjects] = useState<Project[]>([
     {
       id: '1',
-      name: 'Meu Currículo Interativo',
-      description: 'Currículo interativo desenvolvido com HTML, CSS e JavaScript, com design responsivo e animações.',
-      githubUrl: 'https://github.com/fabioffigueiredo/-meu-curriculo-interativo',
-      liveUrl: 'https://fabioffigueiredo.github.io/-meu-curriculo-interativo/',
-      technologies: ['HTML', 'CSS', 'JavaScript'],
-      stars: 5,
+      name: 'Workout-API SQL',
+      description: 'API criada usando arquitetura API RESTful, usando FastAPI, Docker, Python e banco de dados Relacional.',
+
+      githubUrl: 'https://github.com/fabioffigueiredo/workout_api',
+      technologies: ['FastAPI', 'Python', 'Docker', 'Pydantic', 'Alembic', 'SQLALchemy'],
+      stars: 0,
       forks: 2
     },
     {
       id: '2',
-      name: 'Análise de Dados Python',
-      description: 'Projeto de análise de dados utilizando Python, Pandas e visualizações com Matplotlib.',
-      githubUrl: 'https://github.com/fabioffigueiredo/analise-dados-python',
-      technologies: ['Python', 'Pandas', 'Matplotlib', 'Jupyter'],
-      stars: 12,
-      forks: 4
+      name: 'Projeto Sistema Bacário (Python DIO)',
+      description: 'Projeto Sistema Bacário, desenvolvido durante o curso Python DIO, com foco em manipulação de dados e análise.',
+      githubUrl: 'https://github.com/fabioffigueiredo/desafio-python-dio',
+      technologies: ['Python', 'Pathlib', 'Requests'],
+
+      stars: 1,
+      forks: 1
     },
     {
       id: '3',
-      name: 'Dashboard Power BI',
-      description: 'Dashboard interativo desenvolvido no Power BI para análise de vendas e métricas de negócio.',
-      githubUrl: 'https://github.com/fabioffigueiredo/dashboard-powerbi',
-      technologies: ['Power BI', 'SQL', 'DAX'],
-      stars: 8,
-      forks: 3
+      name: 'Store API MONGO DB',
+      description: 'API criada usando arquitetura API RESTful, usando FastAPI, Docker, Python e banco de dados NoSQL.',
+      githubUrl: 'https://github.com/fabioffigueiredo/tdd-project',
+      technologies: ['FastAPI', 'Python', 'Docker', 'Pytest','Pre-commit','Pydantic', 'Alembic', 'SQLALchemy'],
+      stars: 1,
+      forks: 1
     },
+
     {
       id: '4',
       name: 'Analisador de Logs Windows Server',
@@ -53,7 +55,17 @@ const ProjectsSection = () => {
       githubUrl: 'https://github.com/fabioffigueiredo/Analisador-de-Logs-Windows-Server',
       technologies: ['Docker', 'Django', 'Python'],
       stars: 1,
-      forks: 0
+      forks: 1
+    },
+    {
+      id: '5',
+      name: 'APP-Python-ETL -Power BI',
+      description: 'Aplicação Python ETL, com interface gráfica, para extração, transformação e carga de dados em Power BI.',
+
+      githubUrl: 'https://github.com/fabioffigueiredo/API-Python-Power-Bi',
+      technologies: ['Pandas', 'Requests','Python', 'Tkinter' ],
+      stars: 1,
+      forks: 1
     }
   ]);
 
