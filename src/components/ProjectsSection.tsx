@@ -20,6 +20,15 @@ const ProjectsSection = () => {
   const [projects, setProjects] = useState<Project[]>([
     {
       id: '1',
+      name: 'Detecção de Câncer de Mama',
+      description: 'Este projeto implementa um pipeline completo de Machine Learning para classificação de câncer de mama, comparando modelos baseline (Regressão Logística) com redes neurais profundas (MLP). O projeto segue as melhores práticas de ciência de dados, incluindo análise exploratória, pré-processamento, modelagem, tuning de hiperparâmetros e validação.',
+      githubUrl: 'https://github.com/fabioffigueiredo/pd_rede_neural',
+      technologies: ['Python', 'Pandas', 'NumPy', 'Scikit-learn', 'Matplotlib', 'Seaborn', 'TensorFlow', 'Keras'],
+      stars: 1,
+      forks: 1
+    },
+    {
+      id: '2',
       name: 'Workout-API SQL',
       description: 'API criada usando arquitetura API RESTful, usando FastAPI, Docker, Python e banco de dados Relacional.',
 
@@ -29,17 +38,17 @@ const ProjectsSection = () => {
       forks: 2
     },
     {
-      id: '2',
+      id: '3',
       name: 'Projeto Sistema Bacário (Python DIO)',
-      description: 'Projeto Sistema Bacário, desenvolvido durante o curso Python DIO, com foco em manipulação de dados e análise.',
-      githubUrl: 'https://github.com/fabioffigueiredo/desafio-python-dio',
-      technologies: ['Python', 'Pathlib', 'Requests'],
+      description: 'Sistema bancário completo desenvolvido para o desafio da DIO (Digital Innovation One), implementando operações bancárias modernas com arquitetura robusta usando FastAPI no backend e React no frontend..',
+      githubUrl: 'https://github.com/fabioffigueiredo/sistema_bancario_dio',
+      technologies: ['Python', 'React','FastAPI', 'Requests'],
 
       stars: 1,
       forks: 1
     },
     {
-      id: '3',
+      id: '4',
       name: 'Store API MONGO DB',
       description: 'API criada usando arquitetura API RESTful, usando FastAPI, Docker, Python e banco de dados NoSQL.',
       githubUrl: 'https://github.com/fabioffigueiredo/tdd-project',
@@ -48,15 +57,7 @@ const ProjectsSection = () => {
       forks: 1
     },
 
-    {
-      id: '4',
-      name: 'Analisador de Logs Windows Server',
-      description: 'Projeto voltada a analise de logs de sistema do Windows server, com implementação de monitoramento em tempo real. Estudo de Docker e Django',
-      githubUrl: 'https://github.com/fabioffigueiredo/Analisador-de-Logs-Windows-Server',
-      technologies: ['Docker', 'Django', 'Python'],
-      stars: 1,
-      forks: 1
-    },
+
     {
       id: '5',
       name: 'APP-Python-ETL -Power BI',
@@ -66,7 +67,16 @@ const ProjectsSection = () => {
       technologies: ['Pandas', 'Requests','Python', 'Tkinter' ],
       stars: 1,
       forks: 1
-    }
+    },
+    {
+      id: '6',
+      name: 'Projeto WhatsApp Automacao',
+      description: 'Este projeto integra Django + DRF com n8n para automatizar atendimentos via WhatsApp, incluindo consultas de câmbio e transferências.',
+      githubUrl: 'https://github.com/fabioffigueiredo/projeto-whatsapp-automacao',
+      technologies: ['Python', 'PostgreSQL','Django', 'N8n', 'Docker' ],
+      stars: 1,
+      forks: 1
+    },
   ]);
 
   // Load projects from localStorage
