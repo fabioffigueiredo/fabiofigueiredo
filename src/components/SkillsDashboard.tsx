@@ -22,9 +22,12 @@ const SkillsDashboard = () => {
   const [animatedProgress, setAnimatedProgress] = useState(0);
   const [skills] = useState<Skill[]>([
     { name: 'Python', level: 98, category: 'backend', color: 'vs-blue' },
+    { name: 'PostgreSQL', level: 80, category: 'database', color: 'vs-green' },
     { name: 'SQL Server', level: 75, category: 'database', color: 'vs-red' },
     { name: 'MariaDB', level: 75, category: 'database', color: 'vs-orange' },
     { name: 'MongoDB', level: 70, category: 'database', color: 'vs-orange' },
+    { name: 'IA Generativa', level: 100, category: 'ai', color: 'vs-purple' },
+    { name: 'Machine Learning', level: 50, category: 'ai', color: 'vs-purple' },
     { name: 'Docker', level: 70, category: 'tools', color: 'vs-cyan' },
     { name: 'Django', level: 70, category: 'backend', color: 'vs-green' },
     { name: 'FastAPI', level: 60, category: 'backend', color: 'vs-yellow' },

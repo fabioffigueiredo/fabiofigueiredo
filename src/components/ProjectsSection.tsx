@@ -20,7 +20,7 @@ const ProjectsSection = () => {
   const [projects, setProjects] = useState<Project[]>([
     {
       id: '1',
-      name: 'Detecção de Câncer de Mama',
+      name: 'Detecção de Câncer de Mama - Redes Neurais',
       description: 'Este projeto implementa um pipeline completo de Machine Learning para classificação de câncer de mama, comparando modelos baseline (Regressão Logística) com redes neurais profundas (MLP). O projeto segue as melhores práticas de ciência de dados, incluindo análise exploratória, pré-processamento, modelagem, tuning de hiperparâmetros e validação.',
       githubUrl: 'https://github.com/fabioffigueiredo/pd_rede_neural',
       technologies: ['Python', 'Pandas', 'NumPy', 'Scikit-learn', 'Matplotlib', 'Seaborn', 'TensorFlow', 'Keras'],
@@ -60,11 +60,11 @@ const ProjectsSection = () => {
 
     {
       id: '5',
-      name: 'APP-Python-ETL -Power BI',
-      description: 'Aplicação Python ETL, com interface gráfica, para extração, transformação e carga de dados em Power BI.',
+      name: 'Projeto de Deep Learning - Detecção de Cancêr de Mama ',
+      description: 'Este projeto implementa um modelo de aprendizagem supervisionada para classificação binária utilizando dados relacionados ao Câncer de Mama. O objetivo principal é desenvolver e comparar diferentes modelos de redes neurais usando TensorFlow/Keras para predizer se um tumor é maligno ou benigno.',
 
       githubUrl: 'https://github.com/fabioffigueiredo/API-Python-Power-Bi',
-      technologies: ['Pandas', 'Requests','Python', 'Tkinter' ],
+      technologies: ['Python', 'Pandas', 'NumPy', 'Scikit-learn', 'Matplotlib', 'Seaborn', 'TensorFlow', 'Keras'],
       stars: 1,
       forks: 1
     },
@@ -72,7 +72,7 @@ const ProjectsSection = () => {
       id: '6',
       name: 'Projeto WhatsApp Automacao',
       description: 'Este projeto integra Django + DRF com n8n para automatizar atendimentos via WhatsApp, incluindo consultas de câmbio e transferências.',
-      githubUrl: 'https://github.com/fabioffigueiredo/projeto-whatsapp-automacao',
+      githubUrl: '',
       technologies: ['Python', 'PostgreSQL','Django', 'N8n', 'Docker' ],
       stars: 1,
       forks: 1

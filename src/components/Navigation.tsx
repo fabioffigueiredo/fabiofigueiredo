@@ -39,7 +39,7 @@ const Navigation = ({ activeSection, onSectionChange, isAdmin, onToggleAdmin }: 
             <Code2 className="h-6 w-6 text-vs-blue" />
             <span className="syntax-highlight font-semibold">
               <span className="syntax-blue">const</span>{' '}
-              <span className="syntax-yellow">portfolio</span>{' '}
+              <span className="syntax-yellow">portifólio</span>{' '}
               <span className="syntax-purple">=</span>{' '}
               <span className="syntax-green">"Fabio Figueiredo"</span>
             </span>

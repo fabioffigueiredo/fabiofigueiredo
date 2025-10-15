@@ -244,7 +244,7 @@ const EducationSection = () => {
             
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4">
-                <div className="text-2xl font-bold text-vs-green">9+</div>
+                <div className="text-2xl font-bold text-vs-green">11+</div>
                 <div className="text-sm text-muted-foreground">Anos de Experiência</div>
               </div>
               <div className="p-4">

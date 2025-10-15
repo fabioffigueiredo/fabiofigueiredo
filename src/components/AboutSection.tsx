@@ -112,24 +112,27 @@ const AboutSection = () => {
               </div>
               
               <div className="space-y-4 text-muted-foreground">
-                <p>
-                  Com <span className="text-vs-orange font-semibold">9 anos de experiência</span> em 
-                  infraestrutura de TI, estou em uma transição estratégica para as áreas de 
-                  <span className="text-vs-blue font-semibold"> Programação Python</span>, 
-                  <span className="text-vs-green font-semibold"> Inteligência Artificial</span> e 
-                  <span className="text-vs-purple font-semibold"> Análise de Dados</span>.
+                <p className="text-justify">
+                  Com mais de <span className="text-vs-orange font-semibold">11 anos de jornada em Tecnologia da Informação</span>, 
+                  minha paixão é construir pontes entre a infraestrutura de TI, o universo dos dados e o poder da 
+                  <span className="text-vs-green font-semibold"> Inteligência Artificial</span>. Eu transformo dados brutos em insights 
+                  estratégicos que aceleram a inovação e geram resultados tangíveis para o negócio.
                 </p>
                 
-                <p>
-                  Minha sólida base técnica e experiência com sistemas complexos me proporcionam 
-                  um entendimento valioso para otimizar fluxos de dados e ambientes para 
-                  implementação de soluções de IA.
+                <p className="text-justify">
+                  Minha carreira foi consolidada sobre uma base sólida em infraestrutura, com vasta experiência na administração de 
+                  ecossistemas <span className="text-vs-blue font-semibold">Microsoft on-premise</span> (Active Directory, Servidores de Arquivos) em lidar com usuários internos e 
+                  externos. Essa vivência profunda em sistemas corporativos me proporciona hoje uma visão privilegiada sobre 
+                  segurança, governança e os desafios reais para implementar soluções de <span className="text-vs-purple font-semibold">Engenharia de Dados e IA</span> de forma robusta 
+                  e escalável.
                 </p>
                 
-                <p>
-                  Atualmente, como <span className="text-vs-blue font-semibold">Programador Júnior em Python</span>, 
-                  trabalho com foco em <span className="text-vs-green font-semibold">extração de dados</span> de 
-                  diversas fontes e uso de bibliotecas como Pandas para análise e processamento.
+                <p className="text-justify">
+                  Atualmente, como <span className="text-vs-blue font-semibold">Consultor em IA Generativa</span>, 
+                  meu foco é aplicar as ferramentas mais avançadas do mercado para 
+                  otimizar processos e criar soluções inteligentes. Estou aprofundando meus conhecimentos na <span className="text-vs-orange font-semibold">Pós-Graduação MIT em 
+                  Inteligência Artificial, Machine Learning e Deep Learning</span>, aplicando técnicas avançadas de NLP e automação em 
+                  projetos práticos.
                 </p>
               </div>
             </Card>
@@ -142,16 +145,16 @@ const AboutSection = () => {
               </div>
               
               <div className="space-y-3">
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-justify">
                   Tenho ampla experiência em <span className="text-vs-blue font-semibold">comunicação</span> e 
                   <span className="text-vs-purple font-semibold"> trabalho em equipe</span>, tendo trabalhado 
-                  apoiando mais de <span className="text-vs-orange font-semibold">50 pessoas</span> em 
+                  apoiando mais de <span className="text-vs-orange font-semibold">100 pessoas</span> em 
                   diferentes projetos e necessidades técnicas.
                 </p>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 bg-vs-blue/10 rounded-lg">
-                    <div className="text-2xl font-bold text-vs-blue">50+</div>
+                    <div className="text-2xl font-bold text-vs-blue">100+</div>
                     <div className="text-xs text-muted-foreground">Pessoas Apoiadas</div>
                   </div>
                   <div className="p-3 bg-vs-green/10 rounded-lg">
@@ -160,7 +163,7 @@ const AboutSection = () => {
                   </div>
                 </div>
                 
-                <p className="text-muted-foreground text-sm">
+                <p className="text-muted-foreground text-sm text-justify">
                   Experiência em lidar com <span className="text-vs-cyan font-semibold">clientes internos e externos</span>, 
                   desenvolvendo soluções personalizadas e mantendo relacionamentos profissionais duradouros.
                 </p>
@@ -196,7 +199,7 @@ const AboutSection = () => {
                     >
                       <Icon className={`h-5 w-5 mb-2 ${skill.color}`} />
                       <h4 className="font-semibold text-sm mb-1">{skill.title}</h4>
-                      <p className="text-xs text-muted-foreground">{skill.description}</p>
+                      <p className="text-xs text-muted-foreground text-justify">{skill.description}</p>
                     </motion.div>
                   );
                 })}
@@ -225,7 +228,7 @@ const AboutSection = () => {
                         <Icon className="h-5 w-5 text-vs-blue mt-0.5" />
                         <div className="flex-1">
                           <h4 className="font-semibold text-vs-blue mb-1">{area.title}</h4>
-                          <p className="text-sm text-muted-foreground mb-2">{area.description}</p>
+                          <p className="text-sm text-muted-foreground mb-2 text-justify">{area.description}</p>
                           <div className="flex flex-wrap gap-1">
                             {area.technologies.map((tech) => (
                               <Badge key={tech} variant="outline" className="text-xs">
@@ -253,7 +256,7 @@ const AboutSection = () => {
           <Card className="p-8 text-center card-shadow bg-gradient-to-r from-vs-blue/10 to-vs-purple/10">
             <Target className="h-12 w-12 text-vs-purple mx-auto mb-4" />
             <h3 className="text-xl font-bold mb-4 text-vs-blue">Objetivo Profissional</h3>
-            <p className="text-muted-foreground max-w-3xl mx-auto leading-relaxed syntax-highlight">
+            <p className="text-muted-foreground max-w-3xl mx-auto leading-relaxed syntax-highlight text-justify">
               <span className="syntax-red">return</span>{' '}
               <span className="syntax-green">"Combinar minha expertise em infraestrutura com novas habilidades em Python e IA para desenvolver soluções inovadoras que transformem dados brutos em insights estratégicos e gerem valor real para organizações."</span>
               <span className="syntax-purple">;</span>

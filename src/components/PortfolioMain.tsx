@@ -133,7 +133,7 @@ const PortfolioMain = () => {
             <div className="flex justify-center space-x-4 text-sm text-muted-foreground">
               <span>© 2025 Fabio Figueiredo</span>
               <span>•</span>
-              <span>Programador Python & Data Scientist</span>
+              <span>Programador Python e IA Especialista</span>
               <span>•</span>
               <span>Rio de Janeiro, RJ</span>
               <span>•</span>

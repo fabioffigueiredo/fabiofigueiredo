@@ -133,7 +133,7 @@ const HeroSection = () => {
                   <span className="syntax-purple">.</span>
                   <span className="syntax-yellow">role</span>{' '}
                   <span className="syntax-purple">=</span>{' '}
-                  <span className="syntax-green">"{heroContent.role}"</span>
+                  <span className="syntax-green">"Programador Python e IA Especialista"</span>
                   <span className="syntax-purple">;</span>
                 </p>
                 <p className="text-lg ml-4">
@@ -141,7 +141,7 @@ const HeroSection = () => {
                   <span className="syntax-purple">.</span>
                   <span className="syntax-yellow">focus</span>{' '}
                   <span className="syntax-purple">=</span>{' '}
-                  <span className="syntax-green">"{heroContent.focus}"</span>
+                  <span className="syntax-green">"Consultor de IA Generativa & Cientista de Dados"</span>
                   <span className="syntax-purple">;</span>
                 </p>
                 <p className="text-lg ml-4">
@@ -149,9 +149,9 @@ const HeroSection = () => {
                   <span className="syntax-purple">.</span>
                   <span className="syntax-yellow">experience</span>{' '}
                   <span className="syntax-purple">=</span>{' '}
-                  <span className="syntax-orange">{heroContent.experience_years}</span>
+                  <span className="syntax-orange">11</span>{' '}
                   <span className="syntax-purple">;</span>{' '}
-                  <span className="syntax-gray">// anos em TI</span>
+                  <span className="syntax-gray">// anos em TI</span> 
                 </p>
                 <p className="text-lg">
                   <span className="syntax-purple">{'}'}</span>
@@ -184,7 +184,7 @@ const HeroSection = () => {
                   className="syntax-highlight border-vs-blue text-vs-blue hover:bg-vs-blue/10 hover:text-vs-blue"
                 >
                   <a
-                    href="https://drive.google.com/uc?export=download&id=1HJ12i7RQeZMSPkI_T5HryMEIb0gM-N5p"
+                    href="https://drive.google.com/file/d/11098IC262xURuMw08dsi46ynL8XoZXaM/view?usp=sharing"
                     download="Fabio_Figueiredo_CV.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -226,10 +226,18 @@ const HeroSection = () => {
                 const IconComponent = (icons as any)[social.icon];
                 if (!IconComponent) return null;
                 
+                // Sobrescreve URL especificamente para LinkedIn
+                const isLinkedIn = social.icon === 'Linkedin' 
+                  || (social.platform && social.platform.toLowerCase().includes('linkedin'))
+                  || (social.url && social.url.toLowerCase().includes('linkedin.com'));
+                const resolvedUrl = isLinkedIn 
+                  ? 'https://www.linkedin.com/in/fabio-ffigueiredo-datascience/' 
+                  : social.url;
+                
                 return (
                   <motion.a
                     key={social.id}
-                    href={social.url}
+                    href={resolvedUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.1, y: -2 }}

@@ -24,12 +24,14 @@ const ExperienceSection = () => {
   const experiences: Experience[] = [
     {
       id: '1',
-      title: 'Programador Python Júnior',
+      title: 'Consultor de IA Generativa e Programador Python',
       company: 'Atual Posição',
       location: 'Rio de Janeiro, RJ',
       period: '2025 - Presente',
-      description: 'Desenvolvimento de soluções em Python com foco em extração e análise de dados de diversas fontes.',
+      description: 'Desenvolvimento de soluções em Python com foco em extração e análise de dados de diversas fontes e consultoria em IA Generativa.',
       achievements: [
+        'Mentoria sobre utilização de IA, focado em melhorias no trabalho e no dia a dia',
+        'Consultoria em projetos de IA Generativa, com foco em soluções customizadas',
         'Implementação de sistemas de extração de dados via APIs',
         'Desenvolvimento de automações com pandas e numpy',
         'Integração com planilhas Excel e Google Sheets',
@@ -73,7 +75,7 @@ const ExperienceSection = () => {
             <span className="syntax-purple">{'{'}</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Trajetória profissional de <span className="text-vs-orange font-semibold">9 anos em TI</span> com 
+            Trajetória profissional de <span className="text-vs-orange font-semibold">11 anos em TI</span> com 
             transição estratégica para <span className="text-vs-blue font-semibold">desenvolvimento Python</span> e 
             <span className="text-vs-purple font-semibold"> ciência de dados</span>
           </p>
@@ -168,12 +170,12 @@ const ExperienceSection = () => {
           className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           <Card className="p-6 text-center card-shadow">
-            <div className="text-3xl font-bold text-vs-blue mb-2">9+</div>
+            <div className="text-3xl font-bold text-vs-blue mb-2">11+</div>
             <p className="text-muted-foreground">Anos de Experiência</p>
           </Card>
           
           <Card className="p-6 text-center card-shadow">
-            <div className="text-3xl font-bold text-vs-green mb-2">50+</div>
+            <div className="text-3xl font-bold text-vs-green mb-2">100+</div>
             <p className="text-muted-foreground">Pessoas Apoiadas</p>
           </Card>
           
